@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 
+import { faSquareCaretLeft, faSquareCaretRight } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import addDaysToDate from "../services/addDaysToDate.js";
+
 import DueTaskTile from "./DueTaskTile.js";
 
 const CurrentTasksList = ({ currentUser, ...props }) => {
   const [tasks, setTasks] = useState([]);
+  const [forDate, setForDate] = useState(new Date());
+  const dateString = forDate.toLocaleDateString("en-us");
 
   useEffect(() => {
-    getTasks()
+    getTasks();
   }, [])
 
   const getTasks = async () => {
+    console.log("getting tasks")
     try {
-      const response = await fetch("/api/v1/tasks/today")
+      const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`)
       }
@@ -20,6 +28,23 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
     } catch (error) {
       console.error(`Error in fetch: ${error.message}`)
     }
+  }
+
+  const nextDay = () => {
+    const next = addDaysToDate(forDate, 1);
+    setForDate(next);
+    getTasks();
+  }
+
+  const prevDay = () => {
+    const prev = addDaysToDate(forDate, -1);
+    setForDate(prev);
+    getTasks();
+  }
+
+  const today = () => {
+    setForDate(new Date());
+    getTasks();
   }
 
   const completeTask = async (id) => {
@@ -48,6 +73,17 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
     <div className="grid-container">
       <div className="text-center">
         <p className="header page-header">Today's tasks</p>
+      </div>
+      <div className="prev-next-day-buttons-container">
+        <button className="button" onClick={prevDay}>
+          <FontAwesomeIcon icon={faSquareCaretLeft} />
+          &nbsp;Prev day
+        </button>
+        <button className="button" onClick={today}>{dateString}</button>
+        <button className="button" onClick={nextDay}>
+          Next day
+          &nbsp;<FontAwesomeIcon icon={faSquareCaretRight} />
+        </button>
       </div>
       <div className="grid-x grid-margin-x">
         {tasksArray}

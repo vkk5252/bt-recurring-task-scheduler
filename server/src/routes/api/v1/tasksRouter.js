@@ -19,20 +19,9 @@ tasksRouter.get("/all", async (req, res) => {
   }
 });
 
-tasksRouter.get("/today", async (req, res) => {
-  try {
-    const tasks = await Task.query();
-    const serializedTasks = TaskSerializer.getSummaries(tasks);
-    const filteredTasks = TaskSerializer.filterTasksForDate(serializedTasks, new Date());
-    return res.status(200).json({ tasks: filteredTasks });
-  } catch (error) {
-    return res.status(500).json({ errors: error });
-  }
-});
-
 tasksRouter.get("/:dateString", async (req, res) => {
   const { dateString } = req.params;
-  const date = new Date(dateString.replace("-", "/"));
+  const date = new Date(dateString);
 
   try {
     const tasks = await Task.query();

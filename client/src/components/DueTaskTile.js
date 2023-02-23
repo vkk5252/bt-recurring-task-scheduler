@@ -10,6 +10,8 @@ const DueTaskTile = ({ id, name, description, startDate, endDate, interval, comp
     await completeTask(id);
   }
 
+  const doNothing = () => {}
+
   return (
     <div className={`task-tile callout cell small-12 medium-6 large-4 shadow-sharp`}>
       <div className="task-tile-info">
@@ -19,15 +21,15 @@ const DueTaskTile = ({ id, name, description, startDate, endDate, interval, comp
         <p>{description}</p>
       </div>
       <div className="task-tile-buttons">
-        <button className="button" onClick={console.log("nothing")}>
+        <button className="button" onClick={doNothing}>
           <FontAwesomeIcon icon={faSquareCheck} />
           &nbsp;Accept
         </button>
-        <button className="button" onClick={console.log("nothing")}>
+        <button className="button" onClick={doNothing}>
           <FontAwesomeIcon icon={faFaceFrown} />
           &nbsp;Overdue
         </button>
-        <button className="button" onClick={console.log("nothing")}>
+        <button className="button" onClick={doNothing}>
           <FontAwesomeIcon icon={faRectangleXmark} />
           &nbsp;Decline
         </button>
