@@ -8,9 +8,10 @@ const addDaysToDate = (date, days) => {
   return date;
 }
 
-const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteTask, disabled }) => {
+const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteTask, setFormToEdit, disabled }) => {
 
-  const thisDisabled = (disabled === "all");
+  const thisDisabled = disabled? (disabled === "all") || (disabled !== id) : false;
+  const thisButtonsDisabled = !!disabled;
   let disabledClass = "";
   if (thisDisabled) {
     disabledClass = "disabled-task";
@@ -25,7 +26,7 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
   }
 
   const handleEditClick = async (event) => {
-    console.log("edit")
+    setFormToEdit(id);
   }
 
   // const startDateString = (new Date(startDate)).toLocaleDateString("en-US");
@@ -43,11 +44,11 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
         <p>Next: {nextRecurrenceString}</p>
       </div>
       <div className="task-tile-buttons">
-        <button className="button" onClick={handleDeleteClick} disabled={thisDisabled}>
+        <button className="button" onClick={handleDeleteClick} disabled={thisButtonsDisabled}>
           <FontAwesomeIcon icon={faTrashCan} />
           &nbsp;Delete
         </button>
-        <button className="button" onClick={handleEditClick} disabled={thisDisabled}>
+        <button className="button" onClick={handleEditClick} disabled={thisButtonsDisabled}>
           <FontAwesomeIcon icon={faPenToSquare} />
           &nbsp;Edit
         </button>

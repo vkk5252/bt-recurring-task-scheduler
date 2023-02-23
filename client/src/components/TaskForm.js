@@ -48,7 +48,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (await addTask(formData)) {
-      console.log("successful, should cancel now")
       handleCancelClick();
     }
   }

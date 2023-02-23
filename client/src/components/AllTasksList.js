@@ -45,9 +45,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
           "Content-Type": "application/json"
         })
       });
-      console.log("hi");
       const newTasksList = tasks.filter(task => task.id !== id);
-      console.log(newTasksList);
       setTasks(newTasksList);
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
@@ -57,9 +55,15 @@ const AllTasksList = ({ currentUser, ...props }) => {
     }
   }
 
-  const handleAddClick = (event) => {
+  const setFormToAdd = () => {
     setFormMode("add");
     setDisabled("all");
+    scrollToForm();
+  }
+
+  const setFormToEdit = (taskTileId) => {
+    setFormMode("edit");
+    setDisabled(taskTileId);
     scrollToForm();
   }
 
@@ -78,12 +82,13 @@ const AllTasksList = ({ currentUser, ...props }) => {
       id={task.id}
       {...task}
       deleteTask={deleteTask}
+      setFormToEdit={setFormToEdit}
       disabled={disabled}
     />;
   })
 
   let formComponent = (
-    <button className="button" onClick={handleAddClick}>
+    <button className="button" onClick={setFormToAdd}>
       <FontAwesomeIcon icon={faSquarePlus} />
       &nbsp;Add task
     </button>
