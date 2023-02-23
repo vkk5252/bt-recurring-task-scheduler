@@ -45,10 +45,14 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   })
 
   return (
-    <>
-      Today's Task list
-      {tasksArray}
-    </>
+    <div className="grid-container">
+      <div className="text-center">
+        <p className="header page-header">Today's tasks</p>
+      </div>
+      <div className="grid-x grid-margin-x">
+        {tasksArray}
+      </div>
+    </div>
   )
 }
 

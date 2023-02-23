@@ -4,7 +4,7 @@ import ErrorList from "./layout/ErrorList.js";
 import translateServerErrors from "../services/translateServerErrors.js";
 
 import DatePicker from "react-datepicker";
-import { faRectangleXmark, faSquareCheck, faSquarePlus } from "@fortawesome/free-regular-svg-icons";
+import { faRectangleXmark, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
