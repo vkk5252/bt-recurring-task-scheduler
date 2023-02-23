@@ -10,6 +10,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
   const [tasks, setTasks] = useState([]);
   const [formMode, setFormMode] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [editTaskData, setEditeditTaskData] = useState(null);
   const formDivRef = useRef(null);
 
   console.log("");
@@ -64,7 +65,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
   const setFormToEdit = (taskTileId) => {
     setFormMode("edit");
     setDisabled(taskTileId);
-    scrollToForm();
+    setEditeditTaskData(tasks.find(task => task.id === taskTileId));
   }
 
   const handleCancelClick = (event) => {
@@ -103,6 +104,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
             currentUser={currentUser}
             addTaskTile={addTaskTile}
             scrollToForm={scrollToForm}
+            editTaskData={editTaskData}
           />
         </div>
       </div>

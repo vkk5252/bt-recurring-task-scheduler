@@ -7,17 +7,17 @@ import DatePicker from "react-datepicker";
 import { faRectangleXmark, faSquareCheck, faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, scrollToForm }) => {
+const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, scrollToForm, editTaskData }) => {
   const [errors, setErrors] = useState({});
   const stringsForModes = {
     add: {
-      addOrEdit: "Add",
+      addOrEdit: "Add a task",
       saveOrSubmit: "Submit",
       API_route: "/api/v1/tasks/new",
       API_method: "POST"
     },
     edit: {
-      addOrEdit: "Edit",
+      addOrEdit: `Edit task "${editTaskData?.name}"`,
       saveOrSubmit: "Save"
     }
   }
@@ -81,7 +81,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
 
   return (
     <>
-      <h3 className="header">{modeStrings.addOrEdit} a task</h3>
+      <h3 className="header">{modeStrings.addOrEdit}</h3>
       <ErrorList errors={errors} />
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" placeholder="Name" onChange={handleInputChange} />
