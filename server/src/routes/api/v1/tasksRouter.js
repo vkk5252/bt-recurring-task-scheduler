@@ -50,11 +50,28 @@ tasksRouter.get("/today", async (req, res) => {
 tasksRouter.post("/new", async (req, res) => {
   const { newTask } = req.body;
   const cleanedNewTask = cleanUserInput(newTask)
-  console.log(cleanedNewTask)
 
   try {
     const addedTask = await Task.query().insertAndFetch(cleanedNewTask)
     return res.status(201).json({ addedTask })
+  } catch (error) {
+    if (error instanceof ValidationError) {
+      return res.status(422).json({ errors: error.data })
+    }
+    return res.status(500).json({ errors: error })
+  }
+});
+
+tasksRouter.put("/edit", async (req, res) => {
+  const { taskId, editedTask } = req.body;
+  const cleanedEditedTask = cleanUserInput(editedTask);
+  if (!cleanedEditedTask.description) {
+    cleanedEditedTask.description = "";
+  }
+
+  try {
+    const updatedTask = await Task.query().updateAndFetchById(taskId, editedTask);
+    return res.status(201).json({ updatedTask })
   } catch (error) {
     if (error instanceof ValidationError) {
       return res.status(422).json({ errors: error.data })

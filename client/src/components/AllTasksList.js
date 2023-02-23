@@ -13,10 +13,6 @@ const AllTasksList = ({ currentUser, ...props }) => {
   const [editTaskData, setEditeditTaskData] = useState(null);
   const formDivRef = useRef(null);
 
-  console.log("");
-  console.log(`Form mode: ${formMode}`);
-  console.log(`Disabled: ${disabled}`);
-
   useEffect(() => {
     getTasks();
   }, [])
@@ -36,6 +32,13 @@ const AllTasksList = ({ currentUser, ...props }) => {
 
   const addTaskTile = (addedTask) => {
     setTasks([...tasks, addedTask])
+  }
+
+  const editTaskTile = (editedTask) => {
+    const originalTaskTile = tasks.find(task => task.id === editedTask.id);
+    for (const field in editedTask) {
+      originalTaskTile[field] = editedTask[field];
+    }
   }
 
   const deleteTask = async (id) => {
@@ -103,6 +106,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
             handleCancelClick={handleCancelClick}
             currentUser={currentUser}
             addTaskTile={addTaskTile}
+            editTaskTile={editTaskTile}
             scrollToForm={scrollToForm}
             editTaskData={editTaskData}
           />

@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import { faRectangleXmark, faSquareCheck, faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, scrollToForm, editTaskData }) => {
+const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
   const [errors, setErrors] = useState({});
   const stringsForModes = {
     add: {
@@ -56,16 +56,24 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (await addTask(formData)) {
-      handleCancelClick();
+    switch (formMode) {
+      case "add":
+        if (await addTask(formData)) {
+          handleCancelClick();
+        }
+        break;
+      case "edit":
+        if (await editTask(formData)) {
+          handleCancelClick();
+        }
     }
   }
 
   const addTask = async (formData) => {
     const newTask = { ...formData, userId: parseInt(currentUser.id) };
     try {
-      const response = await fetch(modeStrings.API_route, {
-        method: modeStrings.API_method,
+      const response = await fetch("/api/v1/tasks/new", {
+        method: "POST",
         headers: new Headers({
           "Content-Type": "application/json"
         }),
@@ -81,6 +89,33 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
       } else {
         const { addedTask } = await response.json();
         addTaskTile(addedTask);
+        return true;
+      }
+    } catch (error) {
+      console.error(`Fetch post error: ${error.name} ${error.message}`);
+    }
+  }
+
+  const editTask = async (formData) => {
+    const editedTask = { ...formData, userId: parseInt(currentUser.id) };
+    try {
+      const response = await fetch("/api/v1/tasks/edit", {
+        method: "PUT",
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        body: JSON.stringify({ taskId: editTaskData.id, editedTask: editedTask })
+      });
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorBody = await response.json()
+          const newErrors = translateServerErrors(errorBody.errors);
+          return setErrors(newErrors);
+        }
+        throw new Error(`${response.status} ${response.statusText}`);
+      } else {
+        const { updatedTask } = await response.json();
+        editTaskTile(updatedTask);
         return true;
       }
     } catch (error) {

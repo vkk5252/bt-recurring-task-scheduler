@@ -17,10 +17,6 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
     disabledClass = "disabled-task";
   }
 
-  // console.log(`This task is disabled: ${thisDisabled}`);
-  // console.log(`disabled is a ${typeof disabled}`);
-  // console.log(`thisDisabled is a ${typeof thisDisabled}`);
-
   const handleDeleteClick = async (event) => {
     await deleteTask(id);
   }
@@ -29,7 +25,6 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
     setFormToEdit(id);
   }
 
-  // const startDateString = (new Date(startDate)).toLocaleDateString("en-US");
   const intervalString = interval > 1 ? `${interval} days` : "day";
   const nextRecurrenceString = (addDaysToDate(new Date(startDate), interval)).toLocaleDateString("en-us");
 

@@ -5,8 +5,6 @@ import DueTaskTile from "./DueTaskTile.js";
 const CurrentTasksList = ({ currentUser, ...props }) => {
   const [tasks, setTasks] = useState([]);
 
-  console.log(tasks)
-
   useEffect(() => {
     getTasks()
   }, [])
