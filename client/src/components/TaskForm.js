@@ -1,12 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import ErrorList from "./layout/ErrorList.js";
+import translateServerErrors from "../services/translateServerErrors.js";
 
 import DatePicker from "react-datepicker";
 import { faRectangleXmark, faSquareCheck, faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const NewTaskForm = ({ addTask, handleCancelClick }) => {
-  const [formData, setFormData] = useState({ startDate: (new Date()).toLocaleDateString("en-US") });
+const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, scrollToForm }) => {
+  const [errors, setErrors] = useState({});
+  const stringsForModes = {
+    add: {
+      addOrEdit: "Add",
+      saveOrSubmit: "Submit",
+      API_route: "/api/v1/tasks/new",
+      API_method: "POST"
+    },
+    edit: {
+      addOrEdit: "Edit",
+      saveOrSubmit: "Save"
+    }
+  }
+  const modeStrings = stringsForModes[formMode];
+  const [formData, setFormData] = useState({});
   const [startDate, setStartDate] = useState(null);
+
+  useEffect(() => {
+    scrollToForm();
+  });
 
   const handleInputChange = (event) => {
     setFormData({
@@ -16,8 +37,8 @@ const NewTaskForm = ({ addTask, handleCancelClick }) => {
   }
 
   const handleDateChange = (date) => {
-    setStartDate(date)
-    const dateString = date.toLocaleDateString("en-US")
+    setStartDate(date);
+    const dateString = date.toLocaleDateString("en-US");
     setFormData({
       ...formData,
       startDate: dateString
@@ -27,13 +48,42 @@ const NewTaskForm = ({ addTask, handleCancelClick }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (await addTask(formData)) {
+      console.log("successful, should cancel now")
       handleCancelClick();
+    }
+  }
+
+  const addTask = async (formData) => {
+    const newTask = { ...formData, userId: parseInt(currentUser.id) };
+    try {
+      const response = await fetch(modeStrings.API_route, {
+        method: modeStrings.API_method,
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        body: JSON.stringify({ newTask })
+      });
+      if (!response.ok) {
+        if (response.status === 422) {
+          const errorBody = await response.json()
+          const newErrors = translateServerErrors(errorBody.errors);
+          return setErrors(newErrors);
+        }
+        throw new Error(`${response.status} ${response.statusText}`);
+      } else {
+        const { addedTask } = await response.json();
+        addTaskTile(addedTask);
+        return true;
+      }
+    } catch (error) {
+      console.error(`Fetch post error: ${error.name} ${error.message}`);
     }
   }
 
   return (
     <>
-      <h3 className="header">Add a task</h3>
+      <h3 className="header">{modeStrings.addOrEdit} a task</h3>
+      <ErrorList errors={errors} />
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" placeholder="Name" onChange={handleInputChange} />
 
@@ -55,7 +105,7 @@ const NewTaskForm = ({ addTask, handleCancelClick }) => {
           </button>
           <button type="submit" className="button">
             <FontAwesomeIcon icon={faSquareCheck} />
-            &nbsp;Submit</button>
+            &nbsp;{modeStrings.saveOrSubmit}</button>
         </div>
       </form>
     </>
