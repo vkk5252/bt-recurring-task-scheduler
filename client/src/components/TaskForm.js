@@ -27,7 +27,16 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
 
   useEffect(() => {
     scrollToForm();
-  });
+    if (formMode === "edit") {
+      setFormData({
+        name: editTaskData.name,
+        description: editTaskData.description || "",
+        startDate: new Date(editTaskData.startDate),
+        interval: editTaskData.interval
+      });
+      setStartDate(new Date(editTaskData.startDate));
+    }
+  }, []);
 
   const handleInputChange = (event) => {
     setFormData({
@@ -84,16 +93,16 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, sc
       <h3 className="header">{modeStrings.addOrEdit}</h3>
       <ErrorList errors={errors} />
       <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" onChange={handleInputChange} />
+        <input type="text" name="name" placeholder="Name" onChange={handleInputChange} value={formData.name || ""} />
 
-        <input type="text" name="description" placeholder="Description" onChange={handleInputChange} />
+        <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""}/>
 
         <div className="start-date-interval-container">
           <div className="start-date-container">
-            <DatePicker selected={startDate} placeholderText={"Start date"} onChange={(date) => handleDateChange(date)} />
+            <DatePicker selected={startDate || null} placeholderText={"Start date"} onChange={(date) => handleDateChange(date)} />
           </div>
           <div className="interval-container">
-            <input type="number" name="interval" placeholder="Interval (days)" onChange={handleInputChange} />
+            <input type="number" name="interval" placeholder="Interval (days)" onChange={handleInputChange} value={formData.interval || ""}/>
           </div>
         </div>
 
