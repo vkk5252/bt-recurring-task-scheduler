@@ -33,7 +33,7 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
         <p>Next: {nextRecurrenceString}</p>
       </div>
       <div className="task-tile-buttons">
-        <button className="button" onClick={handleDeleteClick}>
+        <button className="button" onClick={handleDeleteClick} disabled={false}>
           <FontAwesomeIcon icon={faTrashCan} />
           &nbsp;Delete
         </button>
