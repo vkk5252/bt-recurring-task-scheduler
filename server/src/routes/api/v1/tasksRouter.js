@@ -10,8 +10,6 @@ import TaskSerializer from "../../../serializers/TaskSerializer.js";
 const tasksRouter = new express.Router();
 
 tasksRouter.get("/all", async (req, res) => {
-  const currentUserId = req.user?.id;
-
   try {
     const tasks = await Task.query();
     const serializedTasks = TaskSerializer.getSummaries(tasks);
@@ -22,8 +20,6 @@ tasksRouter.get("/all", async (req, res) => {
 });
 
 tasksRouter.get("/today", async (req, res) => {
-  const currentUserId = req.user?.id;
-
   try {
     const tasks = await Task.query();
     const serializedTasks = TaskSerializer.getSummaries(tasks);
@@ -34,13 +30,14 @@ tasksRouter.get("/today", async (req, res) => {
   }
 });
 
-tasksRouter.get("/today", async (req, res) => {
-  const currentUserId = req.user?.id;
+tasksRouter.get("/:dateString", async (req, res) => {
+  const { dateString } = req.params;
+  const date = new Date(dateString.replace("-", "/"));
 
   try {
     const tasks = await Task.query();
     const serializedTasks = TaskSerializer.getSummaries(tasks);
-    const filteredTasks = TaskSerializer.filterTasksForDate(serializedTasks, new Date());
+    const filteredTasks = TaskSerializer.filterTasksForDate(serializedTasks, date);
     return res.status(200).json({ tasks: filteredTasks });
   } catch (error) {
     return res.status(500).json({ errors: error });
@@ -81,11 +78,11 @@ tasksRouter.put("/edit", async (req, res) => {
 });
 
 tasksRouter.post("/complete/:id", async (req, res) => {
-const { id } = req.params;
+  const { id } = req.params;
 
   try {
     const currentDate = (new Date()).toLocaleDateString("en-us");
-    const addedTaskCompletion = await Task.query().insertAndFetch({taskId: id, date: currentDate})
+    const addedTaskCompletion = await Task.query().insertAndFetch({ taskId: id, date: currentDate })
     return res.status(201).json({ addedTaskCompletion })
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -100,7 +97,7 @@ tasksRouter.delete("/:id", async (req, res) => {
 
   try {
     const tasks = await Task.query().deleteById(id);
-    return res.status(204).json({ message: "task deleted successfully"});
+    return res.status(204).json({ message: "task deleted successfully" });
   } catch (error) {
     return res.status(401).json({ errors: error });
   }
