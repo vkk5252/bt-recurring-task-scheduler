@@ -100,7 +100,8 @@ input::placeholder {
   font-weight: 300px;
 }
 
-.editing-task {
+.disabled-task {
   border-color: #b5b5b5;
   background-color: #cfcfcf;
+  color: gray;
 }

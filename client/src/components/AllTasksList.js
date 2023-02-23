@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-import ErrorList from "./layout/ErrorList.js";
-import translateServerErrors from "../services/translateServerErrors.js";
 
 import TaskForm from "./TaskForm.js";
 import TaskTile from "./TaskTile.js";
 
 const AllTasksList = ({ currentUser, ...props }) => {
-  const [errors, setErrors] = useState({});
   const [tasks, setTasks] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-
-  console.log(tasks)
+  const [formMode, setFormMode] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [editTaskData, setEditeditTaskData] = useState(null);
+  const formDivRef = useRef(null);
 
   useEffect(() => {
-    getTasks()
+    getTasks();
   }, [])
 
   const getTasks = async () => {
@@ -33,31 +30,14 @@ const AllTasksList = ({ currentUser, ...props }) => {
     }
   }
 
-  const addTask = async (formData) => {
-    const newTask = { ...formData, userId: parseInt(currentUser.id) };
-    try {
-      const response = await fetch('/api/v1/tasks/new', {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify({ newTask })
-      });
-      if (!response.ok) {
-        if (response.status === 422) {
-          const errorBody = await response.json()
-          const newErrors = translateServerErrors(errorBody.errors);
-          return setErrors(newErrors);
-        }
-        throw new Error(`${response.status} ${response.statusText}`);
-      } else {
-        const { addedTask } = await response.json();
-        setTasks([...tasks, addedTask])
-        setErrors({});
-        return true;
-      }
-    } catch (error) {
-      console.error(`Fetch post error: ${error.name} ${error.message}`);
+  const addTaskTile = (addedTask) => {
+    setTasks([...tasks, addedTask])
+  }
+
+  const editTaskTile = (editedTask) => {
+    const originalTaskTile = tasks.find(task => task.id === editedTask.id);
+    for (const field in editedTask) {
+      originalTaskTile[field] = editedTask[field];
     }
   }
 
@@ -69,9 +49,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
           "Content-Type": "application/json"
         })
       });
-      console.log("hi");
       const newTasksList = tasks.filter(task => task.id !== id);
-      console.log(newTasksList);
       setTasks(newTasksList);
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
@@ -81,28 +59,57 @@ const AllTasksList = ({ currentUser, ...props }) => {
     }
   }
 
-  const handleAddTaskClick = (event) => {
-    setShowForm(!showForm);
+  const setFormToAdd = () => {
+    setFormMode("add");
+    setDisabled("all");
+    scrollToForm();
+  }
+
+  const setFormToEdit = (taskTileId) => {
+    setFormMode("edit");
+    setDisabled(taskTileId);
+    setEditeditTaskData(tasks.find(task => task.id === taskTileId));
+  }
+
+  const handleCancelClick = (event) => {
+    setFormMode(false);
+    setDisabled(false);
+  }
+
+  const scrollToForm = () => {
+    formDivRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
   const tasksArray = tasks.map(task => {
-    return <TaskTile key={task.id} id={task.id} {...task} deleteTask={deleteTask} />;
+    return <TaskTile
+      key={task.id}
+      id={task.id}
+      {...task}
+      deleteTask={deleteTask}
+      setFormToEdit={setFormToEdit}
+      disabled={disabled}
+    />;
   })
 
-  console.log(tasks);
-
   let formComponent = (
-    <button className="button" onClick={handleAddTaskClick}>
+    <button className="button" onClick={setFormToAdd}>
       <FontAwesomeIcon icon={faSquarePlus} />
       &nbsp;Add task
     </button>
   );
-  if (showForm) {
+  if (formMode) {
     formComponent = (
       <div className="grid-x grid-margin-x">
-        <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp">
-          <ErrorList errors={errors} />
-          <TaskForm addTask={addTask} handleAddTaskClick={handleAddTaskClick} />
+        <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp" ref={formDivRef}>
+          <TaskForm
+            formMode={formMode}
+            handleCancelClick={handleCancelClick}
+            currentUser={currentUser}
+            addTaskTile={addTaskTile}
+            editTaskTile={editTaskTile}
+            scrollToForm={scrollToForm}
+            editTaskData={editTaskData}
+          />
         </div>
       </div>
     );
@@ -117,8 +124,9 @@ const AllTasksList = ({ currentUser, ...props }) => {
         {tasksArray}
       </div>
       {formComponent}
+      <div></div>
     </div>
-  )
+  );
 }
 
 export default AllTasksList;
