@@ -29,9 +29,24 @@ class User extends uniqueFunc(Model) {
       required: ["email"],
 
       properties: {
-        email: { type: "string", format: "email" },
+        email: { type: "string" },
         cryptedPassword: { type: "string" },
       },
+    };
+  }
+
+  static get relationMappings() {
+    const { Task } = require("./index.js");
+
+    return {
+      tasks: {
+        relation: Model.HasManyRelation,
+        modelClass: Task,
+        join: {
+          from: "users.id",
+          to: "tasks.userId"
+        }
+      }
     };
   }
 

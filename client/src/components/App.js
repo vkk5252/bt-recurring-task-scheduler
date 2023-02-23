@@ -4,9 +4,15 @@ import { hot } from "react-hot-loader/root";
 
 import getCurrentUser from "../services/getCurrentUser";
 import "../assets/scss/main.scss";
+
+import "../assets/scss/react-datepicker-cssmodules.scss";
+
 import RegistrationForm from "./registration/RegistrationForm";
 import SignInForm from "./authentication/SignInForm";
 import TopBar from "./layout/TopBar";
+
+import AllTasksList from "./AllTasksList.js";
+import CurrentTasksList from "./CurrentTasksList.js";
 
 const App = (props) => {
   const [currentUser, setCurrentUser] = useState(undefined);
@@ -14,7 +20,7 @@ const App = (props) => {
     try {
       const user = await getCurrentUser()
       setCurrentUser(user)
-    } catch(err) {
+    } catch (err) {
       setCurrentUser(null)
     }
   }
@@ -27,11 +33,26 @@ const App = (props) => {
     <Router>
       <TopBar user={currentUser} />
       <Switch>
-        <Route exact path="/">
-          <h2>Hello from react</h2>
-        </Route>
-        <Route exact path="/users/new" component={RegistrationForm} />
-        <Route exact path="/user-sessions/new" component={SignInForm} />
+        <Route
+          exact
+          path="/tasks/all"
+          render={(props) => <AllTasksList {...props} currentUser={currentUser} />}
+        />
+        <Route
+          exact
+          path="/tasks/today"
+          component={CurrentTasksList}
+        />
+        <Route
+          exact
+          path="/users/new"
+          component={RegistrationForm}
+        />
+        <Route
+          exact
+          path="/user-sessions/new"
+          component={SignInForm}
+        />
       </Switch>
     </Router>
   );

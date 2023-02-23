@@ -1,6 +1,10 @@
 @import "./foundation/settings";
 @import "~foundation-sites/scss/foundation";
+@import "./shadow.scss";
 @include foundation-everything;
+
+@import url(https://fonts.googleapis.com/css2?family=Advent+Pro:wght@100;300&display=swap);
+
 // place global css here
 *,
 *::before,
@@ -11,4 +15,97 @@
 :root {
   -moz-tab-size: 4;
   tab-size: 4;
+}
+
+.callout {
+  border-width: 0.3rem;
+  border-radius: 0.5rem;
+  border-color: #E8D5C4;
+  background-color: #FFF1DC;
+}
+
+// .callout.secondary {
+//   background-color: #FFF1DC;
+// }
+
+
+p {
+  font-family: 'Advent Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 0px;
+}
+
+.header {
+  font-family: 'Advent Pro', sans-serif;
+  font-weight: 1000;
+}
+
+.task-tile-header {
+  font-size: 30px;
+}
+
+.page-header {
+  font-size: 60px;
+}
+
+body {
+  background-color: #3A98B9;
+}
+
+.button {
+  border-radius: 1em;
+  font-family: 'Advent Pro', sans-serif;
+  font-weight: 1000;
+  font-size: 17px;
+}
+
+.task-tile-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.start-date-container {
+  margin-right: 6px;
+}
+
+.interval-container {
+  margin-left: 6px;
+}
+
+.start-date-interval-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.task-tile-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.form-buttons-bottom {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button {
+  margin: 0px;
+}
+
+input::placeholder {
+  font-family: 'Advent Pro', sans-serif;
+  color: black;
+  font-weight: 300px;
+}
+
+.editing-task {
+  border-color: #b5b5b5;
+  background-color: #cfcfcf;
 }
