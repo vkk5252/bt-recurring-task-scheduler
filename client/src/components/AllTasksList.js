@@ -12,9 +12,12 @@ import TaskTile from "./TaskTile.js";
 const AllTasksList = ({ currentUser, ...props }) => {
   const [errors, setErrors] = useState({});
   const [tasks, setTasks] = useState([]);
-  const [showForm, setShowForm] = useState(false);
+  const [formMode, setFormMode] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
-  console.log(tasks)
+  console.log("");
+  console.log(`Form mode: ${formMode}`);
+  console.log(`Disabled: ${disabled}`);
 
   useEffect(() => {
     getTasks()
@@ -82,14 +85,24 @@ const AllTasksList = ({ currentUser, ...props }) => {
   }
 
   const handleAddTaskClick = (event) => {
-    setShowForm(!showForm);
+    setFormMode("add");
+    setDisabled("all");
+  }
+
+  const handleCancelClick = (event) => {
+    setFormMode(false);
+    setDisabled(false);
   }
 
   const tasksArray = tasks.map(task => {
-    return <TaskTile key={task.id} id={task.id} {...task} deleteTask={deleteTask} />;
+    return <TaskTile
+      key={task.id}
+      id={task.id}
+      {...task}
+      deleteTask={deleteTask}
+      disabled={disabled}
+    />;
   })
-
-  console.log(tasks);
 
   let formComponent = (
     <button className="button" onClick={handleAddTaskClick}>
@@ -97,12 +110,15 @@ const AllTasksList = ({ currentUser, ...props }) => {
       &nbsp;Add task
     </button>
   );
-  if (showForm) {
+  if (formMode) {
     formComponent = (
       <div className="grid-x grid-margin-x">
         <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp">
           <ErrorList errors={errors} />
-          <TaskForm addTask={addTask} handleAddTaskClick={handleAddTaskClick} />
+          <TaskForm
+            addTask={addTask}
+            handleCancelClick={handleCancelClick}
+          />
         </div>
       </div>
     );

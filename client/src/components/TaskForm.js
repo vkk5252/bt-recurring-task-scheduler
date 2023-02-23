@@ -4,11 +4,9 @@ import DatePicker from "react-datepicker";
 import { faRectangleXmark, faSquareCheck, faSquarePlus } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const NewTaskForm = ({ addTask, handleAddTaskClick }) => {
+const NewTaskForm = ({ addTask, handleCancelClick }) => {
   const [formData, setFormData] = useState({ startDate: (new Date()).toLocaleDateString("en-US") });
   const [startDate, setStartDate] = useState(null);
-
-  console.log(formData)
 
   const handleInputChange = (event) => {
     setFormData({
@@ -29,7 +27,7 @@ const NewTaskForm = ({ addTask, handleAddTaskClick }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (await addTask(formData)) {
-      handleAddTaskClick();
+      handleCancelClick();
     }
   }
 
@@ -51,7 +49,7 @@ const NewTaskForm = ({ addTask, handleAddTaskClick }) => {
         </div>
 
         <div className="form-buttons-bottom">
-          <button type="button" className="button" onClick={handleAddTaskClick}>
+          <button type="button" className="button" onClick={handleCancelClick}>
             <FontAwesomeIcon icon={faRectangleXmark} />
             &nbsp;Cancel
           </button>
