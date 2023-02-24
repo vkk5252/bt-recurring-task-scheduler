@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
 
+import { faSquareCaretLeft, faSquareCaretRight } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import addDaysToDate from "../services/addDaysToDate.js";
+
 import DueTaskTile from "./DueTaskTile.js";
 
 const CurrentTasksList = ({ currentUser, ...props }) => {
   const [tasks, setTasks] = useState([]);
+  const [forDate, setForDate] = useState(new Date());
+  const dateString = forDate.toLocaleDateString("en-us");
 
   useEffect(() => {
-    getTasks()
-  }, [])
+    getTasks();
+  }, [forDate]);
 
   const getTasks = async () => {
     try {
-      const response = await fetch("/api/v1/tasks/today")
+      const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`)
       }
@@ -20,6 +27,20 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
     } catch (error) {
       console.error(`Error in fetch: ${error.message}`)
     }
+  }
+
+  const nextDay = () => {
+    const next = addDaysToDate(forDate, 1);
+    setForDate(new Date(next));
+  }
+
+  const prevDay = () => {
+    const prev = addDaysToDate(forDate, -1);
+    setForDate(new Date(prev));
+  }
+
+  const today = () => {
+    setForDate(new Date());
   }
 
   const completeTask = async (id) => {
@@ -31,7 +52,6 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         })
       });
       const body = await response.json();
-      console.log(body.addedTaskCompletion);
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
       }
@@ -41,15 +61,30 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }
 
   const tasksArray = tasks.map(task => {
-    return <DueTaskTile key={task.id} id={task.id} {...task} completeTask={completeTask} />
-  })
+    return <DueTaskTile key={task.id} id={task.id} {...task} completeTask={completeTask} />;
+  });
 
   return (
-    <>
-      Today's Task list
-      {tasksArray}
-    </>
-  )
+    <div className="grid-container">
+      <div className="text-center">
+        <p className="header page-header">Today's tasks</p>
+      </div>
+      <div className="prev-next-day-buttons-container">
+        <button className="button" onClick={prevDay}>
+          <FontAwesomeIcon icon={faSquareCaretLeft} />
+          &nbsp;Prev day
+        </button>
+        <button className="button" onClick={today}>{dateString}</button>
+        <button className="button" onClick={nextDay}>
+          Next day
+          &nbsp;<FontAwesomeIcon icon={faSquareCaretRight} />
+        </button>
+      </div>
+      <div className="grid-x grid-margin-x">
+        {tasksArray}
+      </div>
+    </div>
+  );
 }
 
 export default CurrentTasksList;

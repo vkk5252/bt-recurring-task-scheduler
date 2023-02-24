@@ -3,10 +3,7 @@ import React from "react";
 import { faTrashCan, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const addDaysToDate = (date, days) => {
-  date.setDate(date.getDate() + days);
-  return date;
-}
+import addDaysToDate from "../services/addDaysToDate";
 
 const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteTask, setFormToEdit, disabled }) => {
 
