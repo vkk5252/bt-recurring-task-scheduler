@@ -22,6 +22,7 @@ tasksRouter.get("/all", async (req, res) => {
 tasksRouter.get("/:dateString", async (req, res) => {
   const { dateString } = req.params;
   const date = new Date(dateString);
+  console.log(date);
 
   try {
     const tasks = await Task.query();

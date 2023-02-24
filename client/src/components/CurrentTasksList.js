@@ -14,10 +14,10 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   useEffect(() => {
     getTasks();
-  }, [])
+  }, [forDate]);
 
   const getTasks = async () => {
-    console.log("getting tasks")
+    console.log(`Getting tasks for ${dateString}`);
     try {
       const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
       if (!response.ok) {
@@ -32,19 +32,20 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   const nextDay = () => {
     const next = addDaysToDate(forDate, 1);
-    setForDate(next);
-    getTasks();
+    // console.log(next);
+    setForDate(new Date(next));
   }
 
   const prevDay = () => {
     const prev = addDaysToDate(forDate, -1);
-    setForDate(prev);
-    getTasks();
+    // console.log(prev);
+    setForDate(new Date(prev));
   }
+  // console.log(forDate);
 
   const today = () => {
     setForDate(new Date());
-    getTasks();
+    // getTasks();
   }
 
   const completeTask = async (id) => {
@@ -56,7 +57,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         })
       });
       const body = await response.json();
-      console.log(body.addedTaskCompletion);
+      // console.log(body.addedTaskCompletion);
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
       }
@@ -66,8 +67,8 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }
 
   const tasksArray = tasks.map(task => {
-    return <DueTaskTile key={task.id} id={task.id} {...task} completeTask={completeTask} />
-  })
+    return <DueTaskTile key={task.id} id={task.id} {...task} completeTask={completeTask} />;
+  });
 
   return (
     <div className="grid-container">
@@ -89,7 +90,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         {tasksArray}
       </div>
     </div>
-  )
+  );
 }
 
 export default CurrentTasksList;
