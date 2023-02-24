@@ -17,7 +17,6 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }, [forDate]);
 
   const getTasks = async () => {
-    console.log(`Getting tasks for ${dateString}`);
     try {
       const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
       if (!response.ok) {
@@ -32,20 +31,16 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   const nextDay = () => {
     const next = addDaysToDate(forDate, 1);
-    // console.log(next);
     setForDate(new Date(next));
   }
 
   const prevDay = () => {
     const prev = addDaysToDate(forDate, -1);
-    // console.log(prev);
     setForDate(new Date(prev));
   }
-  // console.log(forDate);
 
   const today = () => {
     setForDate(new Date());
-    // getTasks();
   }
 
   const completeTask = async (id) => {
@@ -57,7 +52,6 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         })
       });
       const body = await response.json();
-      // console.log(body.addedTaskCompletion);
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
       }
