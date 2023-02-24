@@ -10,7 +10,7 @@ import TaskSerializer from "../../../serializers/TaskSerializer.js";
 const tasksRouter = new express.Router();
 
 tasksRouter.get("/all", async (req, res) => {
-  const currentUserId = req.user.id;
+  const currentUserId = req.user?.id;
 
   try {
     const currentUser = await User.query().findById(currentUserId);
@@ -25,7 +25,7 @@ tasksRouter.get("/all", async (req, res) => {
 tasksRouter.get("/:dateString", async (req, res) => {
   const { dateString } = req.params;
   const date = new Date(dateString);
-  const currentUserId = req.user.id;
+  const currentUserId = req.user?.id;
 
   try {
     const currentUser = await User.query().findById(currentUserId);

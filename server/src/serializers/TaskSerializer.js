@@ -17,14 +17,9 @@ class TaskSerializer {
 
   static filterTasksForDate(tasks, currentDate) {
     return tasks.filter(task => {
-      // console.log("asdfasdfadsfasasdsdfsfs")
-      // console.log(task.startDate)
       const datesMillisecondsDifference = currentDate - task.startDate;
       const datesDaysDifference = Math.floor(datesMillisecondsDifference / (1000 * 60 * 60 * 24));
-      // console.log(datesMillisecondsDifference)
-      // console.log(datesDaysDifference)
-      // console.log(task.interval)
-      // console.log(!(datesDaysDifference % task.interval))
+      
       return datesDaysDifference >= 0 ? !(datesDaysDifference % task.interval) : false;
     })
   }
