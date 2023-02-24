@@ -4,14 +4,17 @@ const { ValidationError } = Objection;
 
 import cleanUserInput from "../../../services/cleanUserInput.js";
 
-import { Task, TaskCompletion } from "../../../models/index.js";
+import { User, Task, TaskCompletion } from "../../../models/index.js";
 import TaskSerializer from "../../../serializers/TaskSerializer.js";
 
 const tasksRouter = new express.Router();
 
 tasksRouter.get("/all", async (req, res) => {
+  const currentUserId = req.user.id;
+
   try {
-    const tasks = await Task.query();
+    const currentUser = await User.query().findById(currentUserId);
+    const tasks = await currentUser.$relatedQuery("tasks");
     const serializedTasks = TaskSerializer.getSummaries(tasks);
     return res.status(200).json({ tasks: serializedTasks });
   } catch (error) {
@@ -22,9 +25,11 @@ tasksRouter.get("/all", async (req, res) => {
 tasksRouter.get("/:dateString", async (req, res) => {
   const { dateString } = req.params;
   const date = new Date(dateString);
+  const currentUserId = req.user.id;
 
   try {
-    const tasks = await Task.query();
+    const currentUser = await User.query().findById(currentUserId);
+    const tasks = await currentUser.$relatedQuery("tasks");
     const serializedTasks = TaskSerializer.getSummaries(tasks);
     const filteredTasks = TaskSerializer.filterTasksForDate(serializedTasks, date);
     return res.status(200).json({ tasks: filteredTasks });
