@@ -44,9 +44,10 @@ tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
     const { body } = req;
     const newTask = {
       ...body,
-      image: req.file.location,
+      image: req.file?.location,
     }
     const cleanedNewTask = cleanUserInput(newTask);
+
     const addedTask = await Task.query().insertAndFetch(cleanedNewTask);
     
     return res.status(201).json({ addedTask });
@@ -58,15 +59,22 @@ tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
   }
 });
 
-tasksRouter.put("/edit", async (req, res) => {
-  const { taskId, editedTask } = req.body;
-  const cleanedEditedTask = cleanUserInput(editedTask);
-  if (!cleanedEditedTask.description) {
-    cleanedEditedTask.description = "";
-  }
-
+tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
   try {
-    const updatedTask = await Task.query().updateAndFetchById(taskId, editedTask);
+    const { body } = req;
+    const editedTask = {
+      ...body,
+      image: req.file?.location,
+    }
+    const { taskId } = editedTask;
+    delete editedTask.taskId;
+
+    const cleanedEditedTask = cleanUserInput(editedTask);
+    if (!cleanedEditedTask.description) {
+      cleanedEditedTask.description = "";
+    }
+
+    const updatedTask = await Task.query().updateAndFetchById(parseInt(taskId), cleanedEditedTask);
     return res.status(201).json({ updatedTask })
   } catch (error) {
     if (error instanceof ValidationError) {
