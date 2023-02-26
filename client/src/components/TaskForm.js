@@ -25,13 +25,12 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const [startDate, setStartDate] = useState(null);
   const [path, setPath] = useState(null);
 
-  // console.log(editTaskData);
-  // console.log(formData);
-
   useEffect(() => {
     scrollToForm();
     if (formMode === "edit") {
       setFormData({
+        ...formData,
+        taskId: editTaskData.id,
         name: editTaskData.name,
         description: editTaskData.description || "",
         image: editTaskData.image,
@@ -41,7 +40,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       setStartDate(new Date(editTaskData.startDate));
       setPath(editTaskData.image);
     }
-
   }, []);
 
   const handleInputChange = (event) => {
@@ -91,7 +89,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const addTask = async (formData) => {
-
     const newTaskBody = new FormData();
     for (const field in formData) {
       newTaskBody.append(field, formData[field]);
@@ -101,7 +98,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       const response = await fetch("/api/v1/tasks/new", {
         method: "POST",
         headers: new Headers({
-          // "Content-Type": "application/json",
           "Accept": "image/jpeg"
         }),
         body: newTaskBody
@@ -124,23 +120,16 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const editTask = async (formData) => {
-    // const editedTask = { ...formData, userId: parseInt(currentUser.id) };
-
     const editTaskBody = new FormData();
-    editTaskBody.append("taskId", parseInt(editTaskData.id));
-    editTaskBody.append("userId", parseInt(currentUser.id));
-    editTaskBody.append("name", formData.name);
-    editTaskBody.append("description", formData.description);
-    console.log(formData.image);
-    editTaskBody.append("image", formData.image);
-    editTaskBody.append("startDate", formData.startDate);
-    editTaskBody.append("interval", formData.interval);
+
+    for (const field in formData) {
+      editTaskBody.append(field, formData[field]);
+    }
 
     try {
       const response = await fetch("/api/v1/tasks/edit", {
         method: "PUT",
         headers: new Headers({
-          // "Content-Type": "application/json",
           "Accept": "image/jpeg"
         }),
         body: editTaskBody

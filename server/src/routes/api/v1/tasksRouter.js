@@ -69,10 +69,6 @@ tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
     const { taskId } = editedTask;
     delete editedTask.taskId;
     const cleanedEditedTask = cleanUserInput(editedTask);
-
-    console.log("cleaned edited")
-    console.log(cleanedEditedTask);
-
     if (!cleanedEditedTask.description) {
       cleanedEditedTask.description = "";
     }
