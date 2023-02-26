@@ -23,7 +23,10 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const modeStrings = stringsForModes[formMode];
   const [formData, setFormData] = useState({ userId: currentUser.id });
   const [startDate, setStartDate] = useState(null);
-  const [path, setPath] = useState([]);
+  const [path, setPath] = useState(null);
+
+  // console.log(editTaskData);
+  // console.log(formData);
 
   useEffect(() => {
     scrollToForm();
@@ -31,11 +34,14 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       setFormData({
         name: editTaskData.name,
         description: editTaskData.description || "",
+        image: editTaskData.image,
         startDate: new Date(editTaskData.startDate),
         interval: editTaskData.interval
       });
       setStartDate(new Date(editTaskData.startDate));
+      setPath(editTaskData.image);
     }
+
   }, []);
 
   const handleInputChange = (event) => {
@@ -50,7 +56,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       image: acceptedImage[0]
     });
-    setPath(acceptedImage.map(file => URL.createObjectURL(file)));
+    setPath(URL.createObjectURL(acceptedImage[0]));
   }
 
   const handleDateChange = (date) => {
@@ -60,6 +66,13 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       startDate: dateString
     });
+  }
+
+  const removeImage = (event) => {
+    setPath(null);
+    const newFormData = {...formData};
+    delete newFormData.image;
+    setFormData(newFormData);
   }
 
   const handleSubmit = async (event) => {
@@ -118,6 +131,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     editTaskBody.append("userId", parseInt(currentUser.id));
     editTaskBody.append("name", formData.name);
     editTaskBody.append("description", formData.description);
+    console.log(formData.image);
     editTaskBody.append("image", formData.image);
     editTaskBody.append("startDate", formData.startDate);
     editTaskBody.append("interval", formData.interval);
@@ -148,6 +162,27 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     }
   }
 
+  let imageComponent;
+  if (path) {
+    imageComponent = (
+      <>
+        <button type="button" className="button" onClick={removeImage}>Remove image</button>
+        <img key={path} src={path} />
+      </>
+    );
+  } else {
+    imageComponent = (
+      <Dropzone onDrop={handleImageUpload}>
+        {({ getRootProps, getInputProps }) => (
+          <button className="button" type="button" {...getRootProps()}>
+            Click here to add an image
+            <input {...getInputProps()} />
+          </button>
+        )}
+      </Dropzone>
+    );
+  }
+
   return (
     <>
       <h3 className="header">{modeStrings.addOrEdit}</h3>
@@ -157,17 +192,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
 
         <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""} />
 
-        <Dropzone onDrop={handleImageUpload}>
-          {({ getRootProps, getInputProps }) => (
-            <section>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Upload Your Meme - drag 'n' drop or click to upload</p>
-              </div>
-            </section>
-          )}
-        </Dropzone>
-        {path.map(path => <img key={path} src={path} />)}
+        <div className="image-input">
+          {imageComponent}
+        </div>
 
         <div className="start-date-interval-container">
           <div className="start-date-container">
