@@ -14,6 +14,7 @@ exports.up = async (knex) => {
       .references("users.id");
     table.string("name").notNullable();
     table.text("description");
+    table.string("image");
     table.string("startDate").notNullable();
     table.string("endDate");
     table.integer("interval").unsigned().notNullable();

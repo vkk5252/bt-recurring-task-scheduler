@@ -4,6 +4,7 @@ import ErrorList from "./layout/ErrorList.js";
 import translateServerErrors from "../services/translateServerErrors.js";
 
 import DatePicker from "react-datepicker";
+import Dropzone from "react-dropzone"
 import { faRectangleXmark, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -12,9 +13,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const stringsForModes = {
     add: {
       addOrEdit: "Add a task",
-      saveOrSubmit: "Submit",
-      API_route: "/api/v1/tasks/new",
-      API_method: "POST"
+      saveOrSubmit: "Submit"
     },
     edit: {
       addOrEdit: `Edit task "${editTaskData?.name}"`,
@@ -24,6 +23,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const modeStrings = stringsForModes[formMode];
   const [formData, setFormData] = useState({});
   const [startDate, setStartDate] = useState(null);
+  const [path, setPath] = useState([]);
 
   useEffect(() => {
     scrollToForm();
@@ -43,6 +43,14 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       [event.currentTarget.name]: event.currentTarget.value
     });
+  }
+
+  const handleImageUpload = (acceptedImage) => {
+    setFormData({
+      ...formData,
+      image: acceptedImage[0]
+    });
+    setPath(acceptedImage.map(file => URL.createObjectURL(file)));
   }
 
   const handleDateChange = (date) => {
@@ -70,14 +78,24 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const addTask = async (formData) => {
-    const newTask = { ...formData, userId: parseInt(currentUser.id) };
+    // const newTask = { ...formData, userId: parseInt(currentUser.id) };
+
+    const newTaskBody = new FormData();
+    newTaskBody.append("userId", parseInt(currentUser.id));
+    newTaskBody.append("name", formData.name);
+    newTaskBody.append("description", formData.description);
+    newTaskBody.append("image", formData.image);
+    newTaskBody.append("startDate", formData.startDate);
+    newTaskBody.append("interval", formData.interval);
+
     try {
       const response = await fetch("/api/v1/tasks/new", {
         method: "POST",
         headers: new Headers({
-          "Content-Type": "application/json"
+          // "Content-Type": "application/json",
+          "Accept": "image/jpeg"
         }),
-        body: JSON.stringify({ newTask })
+        body: newTaskBody
       });
       if (!response.ok) {
         if (response.status === 422) {
@@ -130,14 +148,26 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       <form onSubmit={handleSubmit}>
         <input type="text" name="name" placeholder="Name" onChange={handleInputChange} value={formData.name || ""} />
 
-        <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""}/>
+        <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""} />
+
+        <Dropzone onDrop={handleImageUpload}>
+          {({ getRootProps, getInputProps }) => (
+            <section>
+              <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                <p>Upload Your Meme - drag 'n' drop or click to upload</p>
+              </div>
+            </section>
+          )}
+        </Dropzone>
+        {path.map(path => <img key={path} src={path} />)}
 
         <div className="start-date-interval-container">
           <div className="start-date-container">
             <DatePicker selected={startDate || null} placeholderText={"Start date"} onChange={(date) => handleDateChange(date)} />
           </div>
           <div className="interval-container">
-            <input type="number" name="interval" placeholder="Interval (days)" onChange={handleInputChange} value={formData.interval || ""}/>
+            <input type="number" name="interval" placeholder="Interval (days)" onChange={handleInputChange} value={formData.interval || ""} />
           </div>
         </div>
 

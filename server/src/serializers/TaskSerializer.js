@@ -1,6 +1,6 @@
 class TaskSerializer {
   static getSummary(task) {
-    const allowedAttributes = ["id", "name", "description", "startDate", "endDate", "interval"];
+    const allowedAttributes = ["id", "name", "description", "image", "startDate", "endDate", "interval"];
 
     let serializedTask = {};
     for (const attribute of allowedAttributes) {

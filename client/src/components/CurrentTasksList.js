@@ -61,7 +61,11 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }
 
   const tasksArray = tasks.map(task => {
-    return <DueTaskTile key={task.id} id={task.id} {...task} completeTask={completeTask} />;
+    return <DueTaskTile
+      key={task.id}
+      id={task.id}
+      {...task}
+      completeTask={completeTask} />;
   });
 
   return (
