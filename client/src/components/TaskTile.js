@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import addDaysToDate from "../services/addDaysToDate";
 
-const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteTask, setFormToEdit, disabled }) => {
+const TaskTile = ({ id, name, description, image, startDate, endDate, interval, deleteTask, setFormToEdit, disabled }) => {
 
   const thisDisabled = disabled? (disabled === "all") || (disabled !== id) : false;
   const thisButtonsDisabled = !!disabled;
@@ -33,6 +33,7 @@ const TaskTile = ({ id, name, description, startDate, endDate, interval, deleteT
           <p>Repeats every {intervalString}</p>
         </div>
         <p>{description}</p>
+        <img src={image} />
         <p>Next: {nextRecurrenceString}</p>
       </div>
       <div className="task-tile-buttons">

@@ -3,6 +3,7 @@ import Objection from "objection";
 const { ValidationError } = Objection;
 
 import cleanUserInput from "../../../services/cleanUserInput.js";
+import uploadImage from "../../../services/uploadImage.js";
 
 import { User, Task, TaskCompletion } from "../../../models/index.js";
 import TaskSerializer from "../../../serializers/TaskSerializer.js";
@@ -38,18 +39,22 @@ tasksRouter.get("/:dateString", async (req, res) => {
   }
 });
 
-tasksRouter.post("/new", async (req, res) => {
-  const { newTask } = req.body;
-  const cleanedNewTask = cleanUserInput(newTask)
-
+tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
   try {
-    const addedTask = await Task.query().insertAndFetch(cleanedNewTask)
-    return res.status(201).json({ addedTask })
+    const { body } = req;
+    const newTask = {
+      ...body,
+      image: req.file.location,
+    }
+    const cleanedNewTask = cleanUserInput(newTask);
+    const addedTask = await Task.query().insertAndFetch(cleanedNewTask);
+    
+    return res.status(201).json({ addedTask });
   } catch (error) {
     if (error instanceof ValidationError) {
-      return res.status(422).json({ errors: error.data })
+      return res.status(422).json({ errors: error.data });
     }
-    return res.status(500).json({ errors: error })
+    return res.status(500).json({ errors: error });
   }
 });
 

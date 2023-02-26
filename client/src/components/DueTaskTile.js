@@ -3,7 +3,7 @@ import React from "react";
 import { faSquareCheck, faRectangleXmark, faFaceFrown } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DueTaskTile = ({ id, name, description, startDate, endDate, interval, completeTask }) => {
+const DueTaskTile = ({ id, name, description, image, startDate, endDate, interval, completeTask }) => {
   const startDateString = (new Date(startDate)).toLocaleDateString("en-US");
 
   const handleClick = async (event) => {
@@ -19,6 +19,7 @@ const DueTaskTile = ({ id, name, description, startDate, endDate, interval, comp
           <p className="header task-tile-header">{name}</p>
         </div>
         <p>{description}</p>
+        <img src={image} />
       </div>
       <div className="task-tile-buttons">
         <button className="button" onClick={doNothing}>
