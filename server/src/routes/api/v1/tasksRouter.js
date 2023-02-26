@@ -64,12 +64,14 @@ tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
     const { body } = req;
     const editedTask = {
       ...body,
-      image: req.file?.location,
+      image: req.file?.location || null,
     }
     const { taskId } = editedTask;
     delete editedTask.taskId;
-
     const cleanedEditedTask = cleanUserInput(editedTask);
+
+    console.log(cleanedEditedTask);
+
     if (!cleanedEditedTask.description) {
       cleanedEditedTask.description = "";
     }

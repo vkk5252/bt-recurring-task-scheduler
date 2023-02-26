@@ -115,14 +115,25 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const editTask = async (formData) => {
-    const editedTask = { ...formData, userId: parseInt(currentUser.id) };
+    // const editedTask = { ...formData, userId: parseInt(currentUser.id) };
+
+    const editTaskBody = new FormData();
+    editTaskBody.append("taskId", parseInt(editTaskData.id));
+    editTaskBody.append("userId", parseInt(currentUser.id));
+    editTaskBody.append("name", formData.name);
+    editTaskBody.append("description", formData.description);
+    editTaskBody.append("image", formData.image);
+    editTaskBody.append("startDate", formData.startDate);
+    editTaskBody.append("interval", formData.interval);
+
     try {
       const response = await fetch("/api/v1/tasks/edit", {
         method: "PUT",
         headers: new Headers({
-          "Content-Type": "application/json"
+          // "Content-Type": "application/json",
+          "Accept": "image/jpeg"
         }),
-        body: JSON.stringify({ taskId: editTaskData.id, editedTask: editedTask })
+        body: editTaskBody
       });
       if (!response.ok) {
         if (response.status === 422) {
