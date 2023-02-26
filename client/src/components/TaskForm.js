@@ -5,7 +5,7 @@ import translateServerErrors from "../services/translateServerErrors.js";
 
 import DatePicker from "react-datepicker";
 import Dropzone from "react-dropzone"
-import { faRectangleXmark, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
+import { faRectangleXmark, faSquareCheck, faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
@@ -21,9 +21,12 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     }
   }
   const modeStrings = stringsForModes[formMode];
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ userId: currentUser.id });
   const [startDate, setStartDate] = useState(null);
   const [path, setPath] = useState(null);
+
+  // console.log(formData);
+  console.log(path);
 
   useEffect(() => {
     scrollToForm();
@@ -64,7 +67,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const removeImage = (event) => {
-    setPath(null);
+    // setPath(null);
   }
 
   const handleSubmit = async (event) => {
@@ -83,15 +86,11 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const addTask = async (formData) => {
-    // const newTask = { ...formData, userId: parseInt(currentUser.id) };
 
     const newTaskBody = new FormData();
-    newTaskBody.append("userId", parseInt(currentUser.id));
-    newTaskBody.append("name", formData.name);
-    newTaskBody.append("description", formData.description);
-    newTaskBody.append("image", formData.image);
-    newTaskBody.append("startDate", formData.startDate);
-    newTaskBody.append("interval", formData.interval);
+    for (const field in formData) {
+      newTaskBody.append(field, formData[field]);
+    }
 
     try {
       const response = await fetch("/api/v1/tasks/new", {
@@ -170,7 +169,8 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       <Dropzone onDrop={handleImageUpload}>
         {({ getRootProps, getInputProps }) => (
           <button className="button image-button" type="button" {...getRootProps()}>
-            Click here to add an image
+            <FontAwesomeIcon icon={faImage} />
+            &nbsp;Add image
             <input {...getInputProps()} />
           </button>
         )}
