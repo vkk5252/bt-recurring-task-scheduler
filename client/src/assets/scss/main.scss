@@ -117,3 +117,10 @@ input::placeholder {
   font-weight: 1000px;
   font-size: 25px;
 }
+
+.image-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 1rem;
+}

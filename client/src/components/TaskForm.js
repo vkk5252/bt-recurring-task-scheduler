@@ -23,7 +23,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const modeStrings = stringsForModes[formMode];
   const [formData, setFormData] = useState({});
   const [startDate, setStartDate] = useState(null);
-  const [path, setPath] = useState([]);
+  const [path, setPath] = useState(null);
 
   useEffect(() => {
     scrollToForm();
@@ -32,9 +32,10 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
         name: editTaskData.name,
         description: editTaskData.description || "",
         startDate: new Date(editTaskData.startDate),
-        interval: editTaskData.interval
+        interval: editTaskData.interval,
       });
       setStartDate(new Date(editTaskData.startDate));
+      setPath(editTaskData.image);
     }
   }, []);
 
@@ -50,7 +51,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       image: acceptedImage[0]
     });
-    setPath(acceptedImage.map(file => URL.createObjectURL(file)));
+    setPath(URL.createObjectURL(acceptedImage[0]));
   }
 
   const handleDateChange = (date) => {
@@ -60,6 +61,10 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       startDate: dateString
     });
+  }
+
+  const removeImage = (event) => {
+    setPath(null);
   }
 
   const handleSubmit = async (event) => {
@@ -152,6 +157,27 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     }
   }
 
+  let imageComponent;
+  if (path) {
+    imageComponent = (
+      <>
+        <button type="button" className="button image-button" onClick={removeImage}>Remove image</button>
+        <img key={path} src={path} />
+      </>
+    );
+  } else {
+    imageComponent = (
+      <Dropzone onDrop={handleImageUpload}>
+        {({ getRootProps, getInputProps }) => (
+          <button className="button image-button" type="button" {...getRootProps()}>
+            Click here to add an image
+            <input {...getInputProps()} />
+          </button>
+        )}
+      </Dropzone>
+    );
+  }
+
   return (
     <>
       <h3 className="header">{modeStrings.addOrEdit}</h3>
@@ -161,17 +187,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
 
         <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""} />
 
-        <Dropzone onDrop={handleImageUpload}>
-          {({ getRootProps, getInputProps }) => (
-            <section>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Upload Your Meme - drag 'n' drop or click to upload</p>
-              </div>
-            </section>
-          )}
-        </Dropzone>
-        {path.map(path => <img key={path} src={path} />)}
+        <div className="image-input">
+          {imageComponent}
+        </div>
 
         <div className="start-date-interval-container">
           <div className="start-date-container">
