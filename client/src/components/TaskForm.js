@@ -24,9 +24,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const [formData, setFormData] = useState({ userId: currentUser.id });
   const [startDate, setStartDate] = useState(null);
   const [path, setPath] = useState(null);
-  
-  console.log(formData);
-  console.log(path);
 
   useEffect(() => {
     scrollToForm();
