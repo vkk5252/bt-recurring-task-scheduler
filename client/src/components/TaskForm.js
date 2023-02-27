@@ -33,7 +33,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
         taskId: editTaskData.id,
         name: editTaskData.name,
         description: editTaskData.description || "",
-        image: editTaskData.image,
         startDate: new Date(editTaskData.startDate),
         interval: editTaskData.interval
       });
@@ -124,6 +123,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
 
     for (const field in formData) {
       editTaskBody.append(field, formData[field]);
+    }
+    if (path) {
+      editTaskBody.append("image", path);
     }
 
     try {
