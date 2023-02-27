@@ -78,7 +78,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
           <FontAwesomeIcon icon={faSquareCaretLeft} />
           &nbsp;Prev day
         </button>
-        <button className="button" onClick={today}>{dateString}</button>
+        <button className="button today-button" onClick={today}>{dateString}</button>
         <button className="button" onClick={nextDay}>
           Next day
           &nbsp;<FontAwesomeIcon icon={faSquareCaretRight} />

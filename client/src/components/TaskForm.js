@@ -5,7 +5,7 @@ import translateServerErrors from "../services/translateServerErrors.js";
 
 import DatePicker from "react-datepicker";
 import Dropzone from "react-dropzone"
-import { faRectangleXmark, faSquareCheck } from "@fortawesome/free-regular-svg-icons";
+import { faRectangleXmark, faSquareCheck, faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
@@ -21,20 +21,24 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     }
   }
   const modeStrings = stringsForModes[formMode];
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ userId: currentUser.id });
   const [startDate, setStartDate] = useState(null);
-  const [path, setPath] = useState([]);
+  const [path, setPath] = useState(null);
 
   useEffect(() => {
     scrollToForm();
     if (formMode === "edit") {
       setFormData({
+        ...formData,
+        taskId: editTaskData.id,
         name: editTaskData.name,
         description: editTaskData.description || "",
+        image: editTaskData.image,
         startDate: new Date(editTaskData.startDate),
         interval: editTaskData.interval
       });
       setStartDate(new Date(editTaskData.startDate));
+      setPath(editTaskData.image);
     }
   }, []);
 
@@ -50,7 +54,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       image: acceptedImage[0]
     });
-    setPath(acceptedImage.map(file => URL.createObjectURL(file)));
+    setPath(URL.createObjectURL(acceptedImage[0]));
   }
 
   const handleDateChange = (date) => {
@@ -60,6 +64,13 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
       ...formData,
       startDate: dateString
     });
+  }
+
+  const removeImage = (event) => {
+    setPath(null);
+    const newFormData = {...formData};
+    delete newFormData.image;
+    setFormData(newFormData);
   }
 
   const handleSubmit = async (event) => {
@@ -78,21 +89,15 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const addTask = async (formData) => {
-    // const newTask = { ...formData, userId: parseInt(currentUser.id) };
-
     const newTaskBody = new FormData();
-    newTaskBody.append("userId", parseInt(currentUser.id));
-    newTaskBody.append("name", formData.name);
-    newTaskBody.append("description", formData.description);
-    newTaskBody.append("image", formData.image);
-    newTaskBody.append("startDate", formData.startDate);
-    newTaskBody.append("interval", formData.interval);
+    for (const field in formData) {
+      newTaskBody.append(field, formData[field]);
+    }
 
     try {
       const response = await fetch("/api/v1/tasks/new", {
         method: "POST",
         headers: new Headers({
-          // "Content-Type": "application/json",
           "Accept": "image/jpeg"
         }),
         body: newTaskBody
@@ -115,14 +120,19 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   }
 
   const editTask = async (formData) => {
-    const editedTask = { ...formData, userId: parseInt(currentUser.id) };
+    const editTaskBody = new FormData();
+
+    for (const field in formData) {
+      editTaskBody.append(field, formData[field]);
+    }
+
     try {
       const response = await fetch("/api/v1/tasks/edit", {
         method: "PUT",
         headers: new Headers({
-          "Content-Type": "application/json"
+          "Accept": "image/jpeg"
         }),
-        body: JSON.stringify({ taskId: editTaskData.id, editedTask: editedTask })
+        body: editTaskBody
       });
       if (!response.ok) {
         if (response.status === 422) {
@@ -141,6 +151,27 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     }
   }
 
+  let imageComponent;
+  if (path) {
+    imageComponent = (
+      <>
+        <button type="button" className="button" onClick={removeImage}>Remove image</button>
+        <img key={path} src={path} />
+      </>
+    );
+  } else {
+    imageComponent = (
+      <Dropzone onDrop={handleImageUpload}>
+        {({ getRootProps, getInputProps }) => (
+          <button className="button" type="button" {...getRootProps()}>
+            Click here to add an image
+            <input {...getInputProps()} />
+          </button>
+        )}
+      </Dropzone>
+    );
+  }
+
   return (
     <>
       <h3 className="header">{modeStrings.addOrEdit}</h3>
@@ -150,17 +181,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
 
         <input type="text" name="description" placeholder="Description" onChange={handleInputChange} value={formData.description || ""} />
 
-        <Dropzone onDrop={handleImageUpload}>
-          {({ getRootProps, getInputProps }) => (
-            <section>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Upload Your Meme - drag 'n' drop or click to upload</p>
-              </div>
-            </section>
-          )}
-        </Dropzone>
-        {path.map(path => <img key={path} src={path} />)}
+        <div className="image-input">
+          {imageComponent}
+        </div>
 
         <div className="start-date-interval-container">
           <div className="start-date-container">
