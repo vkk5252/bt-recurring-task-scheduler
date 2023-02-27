@@ -7,7 +7,7 @@
  */
 exports.up = async (knex) => {
   return knex.schema.createTable("task_completions", (table) => {
-    table.bigInteger("id");
+    table.bigIncrements("id");
     table.string("date").notNullable();
     table.bigInteger("taskId")
       .unsigned()

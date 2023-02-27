@@ -45,27 +45,59 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   const completeTask = async (id) => {
     try {
-      const response = await fetch(`/api/v1/tasks/complete/${id}`, {
+      const response = await fetch(`/api/v1/tasks/complete`, {
         method: "POST",
         headers: new Headers({
           "Content-Type": "application/json"
-        })
+        }),
+        body: JSON.stringify({ id: id, forDate: forDate.toLocaleDateString("en-us") })
       });
       const body = await response.json();
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
       }
+      setForDate(new Date(forDate));
     } catch (error) {
       console.error(`Error in fetch: ${error.message}`);
     }
   }
 
-  const tasksArray = tasks.map(task => {
+  const uncompleteTask = async (id) => {
+    try {
+      const response = await fetch(`/api/v1/tasks/uncomplete`, {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json"
+        }),
+        body: JSON.stringify({ id: id, forDate: forDate.toLocaleDateString("en-us") })
+      });
+      if (!response.ok) {
+        throw new Error(`${response.status} (${response.statusText})`);
+      }
+      setForDate(new Date(forDate));
+    } catch (error) {
+      console.error(`Error in fetch: ${error.message}`);
+    }
+  }
+
+  const uncompletedTasksArray = tasks.filter(task => !task.completedForToday).map(task => {
     return <DueTaskTile
       key={task.id}
       id={task.id}
       {...task}
-      completeTask={completeTask} />;
+      completeTask={completeTask}
+      uncompleteTask={uncompleteTask}
+    />;
+  });
+
+  const completedTasksArray = tasks.filter(task => task.completedForToday).map(task => {
+    return <DueTaskTile
+      key={task.id}
+      id={task.id}
+      {...task}
+      completeTask={completeTask}
+      uncompleteTask={uncompleteTask}
+    />;
   });
 
   return (
@@ -85,7 +117,11 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         </button>
       </div>
       <div className="grid-x grid-margin-x">
-        {tasksArray}
+        {uncompletedTasksArray}
+      </div>
+      <hr />
+      <div className="grid-x grid-margin-x">
+        {completedTasksArray}
       </div>
     </div>
   );

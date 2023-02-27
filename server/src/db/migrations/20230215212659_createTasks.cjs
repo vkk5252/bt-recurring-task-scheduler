@@ -17,6 +17,7 @@ exports.up = async (knex) => {
     table.string("image");
     table.string("startDate").notNullable();
     table.string("endDate");
+    table.boolean("deleted");
     table.integer("interval").unsigned().notNullable();
     table.timestamp("createdAt").notNullable().defaultTo(knex.fn.now());
     table.timestamp("updatedAt").notNullable().defaultTo(knex.fn.now());

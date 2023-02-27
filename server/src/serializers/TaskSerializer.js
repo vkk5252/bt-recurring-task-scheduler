@@ -1,6 +1,8 @@
+import { Task } from "../models/index.js";
+
 class TaskSerializer {
   static getSummary(task) {
-    const allowedAttributes = ["id", "name", "description", "image", "startDate", "endDate", "interval"];
+    const allowedAttributes = ["id", "name", "description", "image", "startDate", "endDate", "interval", "deleted"];
 
     let serializedTask = {};
     for (const attribute of allowedAttributes) {
@@ -22,6 +24,14 @@ class TaskSerializer {
       
       return datesDaysDifference >= 0 ? !(datesDaysDifference % task.interval) : false;
     })
+  }
+
+  static async addCompletedForTodayProperty(task, dateString) {
+    const taskRecord = await Task.query().findById(task.id);
+    const completions = await taskRecord.$relatedQuery("completions");
+    const completedForToday = !!completions.find(completion => completion.date === dateString.replaceAll("-", "/"));
+
+    return { ...task, completedForToday: completedForToday };
   }
 }
 

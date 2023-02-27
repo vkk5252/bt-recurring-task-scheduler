@@ -3,14 +3,35 @@ import React from "react";
 import { faSquareCheck, faRectangleXmark, faFaceFrown } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DueTaskTile = ({ id, name, description, image, startDate, endDate, interval, completeTask }) => {
+const DueTaskTile = ({ id, name, description, image, startDate, endDate, interval, completedForToday, completeTask, uncompleteTask }) => {
   const startDateString = (new Date(startDate)).toLocaleDateString("en-US");
 
-  const handleClick = async (event) => {
+  const handleCompleteClick = async (event) => {
     await completeTask(id);
   }
 
-  const doNothing = () => {}
+  const handleUncompleteClick = async (event) => {
+    await uncompleteTask(id);
+  }
+
+  const doNothing = () => { }
+
+  let buttons;
+  if (completedForToday) {
+    buttons = (
+      <button className="button" onClick={handleUncompleteClick}>
+        <FontAwesomeIcon icon={faRectangleXmark} />
+        &nbsp;Unmark done
+      </button>
+    )
+  } else {
+    buttons = (
+        <button className="button" onClick={handleCompleteClick}>
+          <FontAwesomeIcon icon={faSquareCheck} />
+          &nbsp;Mark done
+        </button>
+    );
+  }
 
   return (
     <div className={`task-tile callout cell small-12 medium-6 large-4 shadow-sharp`}>
@@ -22,18 +43,7 @@ const DueTaskTile = ({ id, name, description, image, startDate, endDate, interva
         <img src={image} />
       </div>
       <div className="task-tile-buttons">
-        <button className="button" onClick={doNothing}>
-          <FontAwesomeIcon icon={faSquareCheck} />
-          &nbsp;Accept
-        </button>
-        <button className="button" onClick={doNothing}>
-          <FontAwesomeIcon icon={faFaceFrown} />
-          &nbsp;Overdue
-        </button>
-        <button className="button" onClick={doNothing}>
-          <FontAwesomeIcon icon={faRectangleXmark} />
-          &nbsp;Decline
-        </button>
+        {buttons}
       </div>
     </div>
   )

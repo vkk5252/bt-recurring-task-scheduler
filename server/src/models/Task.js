@@ -30,12 +30,12 @@ class Task extends Model {
           to: "users.id"
         }
       },
-      taskCompletion: {
+      completions: {
         relation: Model.HasManyRelation,
         modelClass: TaskCompletion,
         join: {
           from: "tasks.id",
-          to: "taskCompletions.taskId"
+          to: "task_completions.taskId"
         }
       }
     };

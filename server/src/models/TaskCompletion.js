@@ -2,7 +2,7 @@ const Model = require("./Model.js");
 
 class TaskCompletion extends Model {
   static get tableName() {
-    return "taskCompletions";
+    return "task_completions";
   }
 
   static get relationMappings() {
@@ -13,7 +13,7 @@ class TaskCompletion extends Model {
         relation: Model.BelongsToOneRelation,
         modelClass: Task,
         join: {
-          from: "taskCompletions.taskId",
+          from: "task_completions.taskId",
           to: "tasks.id"
         }
       }

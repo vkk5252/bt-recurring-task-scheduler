@@ -24,6 +24,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
   const [formData, setFormData] = useState({ userId: currentUser.id });
   const [startDate, setStartDate] = useState(null);
   const [path, setPath] = useState(null);
+  
+  console.log(formData);
+  console.log(path);
 
   useEffect(() => {
     scrollToForm();
@@ -33,7 +36,6 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
         taskId: editTaskData.id,
         name: editTaskData.name,
         description: editTaskData.description || "",
-        image: editTaskData.image,
         startDate: new Date(editTaskData.startDate),
         interval: editTaskData.interval
       });
@@ -124,6 +126,9 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
 
     for (const field in formData) {
       editTaskBody.append(field, formData[field]);
+    }
+    if (path) {
+      editTaskBody.append("image", path);
     }
 
     try {
