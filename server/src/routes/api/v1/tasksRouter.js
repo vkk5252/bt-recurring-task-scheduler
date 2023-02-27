@@ -62,9 +62,10 @@ tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
 tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
   try {
     const { body } = req;
+    console.log(body);
     const editedTask = {
       ...body,
-      image: req.file?.location || null,
+      image: req.file?.location || body.image || null,
     }
     const { taskId } = editedTask;
     delete editedTask.taskId;
