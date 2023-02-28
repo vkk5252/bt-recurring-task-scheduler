@@ -3,43 +3,33 @@ import React from "react";
 import { faSquareCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DueTaskTile = ({ id, name, description, image, completedForToday, completeTask, uncompleteTask, markTask }) => {
+const DueTaskTile = ({ id, name, description, image, completedForToday, markTask }) => {
   const handleCompleteClick = async (event) => {
-    // await completeTask(id);
     await markTask(id, "complete");
   }
 
   const handleUncompleteClick = async (event) => {
-    // await uncompleteTask(id);
     await markTask(id, "uncomplete");
   }
 
-  let buttons;
-  if (completedForToday) {
-    // const differences = {
-    //   done: {
-    //     buttonText: "Unmark done",
-    //     clickHandler: handleUncompleteClick
-    //   },
-    //   notDone: {
-    //     buttonText: "Mark done",
-    //     clickHandler: handleCompleteClick
-    //   }
-    // }[mode];
-    buttons = (
-      <button className="button" onClick={handleUncompleteClick}>
-        <FontAwesomeIcon icon={faRectangleXmark} />
-        &nbsp;Unmark done
-      </button>
-    )
-  } else {
-    buttons = (
-        <button className="button" onClick={handleCompleteClick}>
-          <FontAwesomeIcon icon={faSquareCheck} />
-          &nbsp;Mark done
-        </button>
-    );
-  }
+  const buttonDifferences = {
+    true: {
+      text: "Unmark done",
+      icon: faRectangleXmark,
+      clickHandler: handleUncompleteClick
+    },
+    false: {
+      text: "Mark done",
+      icon: faSquareCheck,
+      clickHandler: handleCompleteClick
+    }
+  }[completedForToday];
+  const button = (
+    <button className="button" onClick={buttonDifferences.clickHandler}>
+      <FontAwesomeIcon icon={buttonDifferences.icon} />
+      &nbsp;{buttonDifferences.text}
+    </button>
+  )
 
   return (
     <div className={`task-tile callout cell small-12 medium-6 large-4 shadow-sharp`}>
@@ -50,8 +40,8 @@ const DueTaskTile = ({ id, name, description, image, completedForToday, complete
         <p>{description}</p>
         <img src={image} />
       </div>
-      <div className="task-tile-buttons">
-        {buttons}
+      <div className="task-tile-button">
+        {button}
       </div>
     </div>
   )

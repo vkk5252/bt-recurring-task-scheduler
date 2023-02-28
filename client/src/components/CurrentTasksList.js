@@ -30,13 +30,11 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }
 
   const nextDay = () => {
-    const next = addDaysToDate(forDate, 1);
-    setForDate(next);
+    setForDate(addDaysToDate(forDate, 1));
   }
 
   const prevDay = () => {
-    const prev = addDaysToDate(forDate, -1);
-    setForDate(prev);
+    setForDate(addDaysToDate(forDate, -1));
   }
 
   const today = () => {
