@@ -40,7 +40,7 @@ const DueTaskTile = ({ id, name, description, image, completedForToday, markTask
         <p>{description}</p>
         <img src={image} />
       </div>
-      <div className="task-tile-button">
+      <div className="mark-button">
         {button}
       </div>
     </div>

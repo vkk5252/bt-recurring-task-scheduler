@@ -81,6 +81,12 @@ body {
 
 .task-tile-buttons {
   display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.mark-button {
+  display: flex;
   justify-content: center;
   margin-top: 10px;
 }
@@ -104,6 +110,10 @@ input::placeholder {
   border-color: #b5b5b5;
   background-color: #cfcfcf;
   color: gray;
+}
+
+.disabled-image {
+  opacity: 50%;
 }
 
 .prev-next-day-buttons-container {

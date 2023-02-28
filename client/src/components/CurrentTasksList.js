@@ -58,7 +58,6 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
         ...tasks.find(task => task.id === id),
         completedForToday: markAs === "complete" ? true : false
       };
-      console.log(`mark task as ${markAs === "complete"}`);
       setTasks([...newTasks, newlyMarkedTask]);
     } catch (error) {
       console.error(`Error in fetch: ${error.message}`);

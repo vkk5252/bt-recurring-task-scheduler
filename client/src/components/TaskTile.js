@@ -9,9 +9,10 @@ const TaskTile = ({ id, name, description, image, startDate, endDate, interval, 
 
   const thisDisabled = disabled? (disabled === "all") || (disabled !== id) : false;
   const thisButtonsDisabled = !!disabled;
-  let disabledClass = "";
+  let disabledClass = "", disabledImageClass = "";
   if (thisDisabled) {
     disabledClass = "disabled-task";
+    disabledImageClass = "disabled-image";
   }
 
   const handleDeleteClick = async (event) => {
@@ -33,7 +34,7 @@ const TaskTile = ({ id, name, description, image, startDate, endDate, interval, 
           <p>Repeats every {intervalString}</p>
         </div>
         <p>{description}</p>
-        <img src={image} />
+        <img src={image} className={`${disabledImageClass}`}/>
         <p>Next: {nextRecurrenceString}</p>
       </div>
       <div className="task-tile-buttons">

@@ -62,7 +62,6 @@ const AllTasksList = ({ currentUser, ...props }) => {
   const setFormToAdd = () => {
     setFormMode("add");
     setDisabled("all");
-    scrollToForm();
   }
 
   const setFormToEdit = (taskTileId) => {
@@ -71,7 +70,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
     setEditeditTaskData(tasks.find(task => task.id === taskTileId));
   }
 
-  const handleCancelClick = (event) => {
+  const closeForm = (event) => {
     setFormMode(false);
     setDisabled(false);
   }
@@ -103,7 +102,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
         <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp" ref={formDivRef}>
           <TaskForm
             formMode={formMode}
-            handleCancelClick={handleCancelClick}
+            closeForm={closeForm}
             currentUser={currentUser}
             addTaskTile={addTaskTile}
             editTaskTile={editTaskTile}
@@ -124,7 +123,6 @@ const AllTasksList = ({ currentUser, ...props }) => {
         {tasksArray}
       </div>
       {formComponent}
-      <div></div>
     </div>
   );
 }
