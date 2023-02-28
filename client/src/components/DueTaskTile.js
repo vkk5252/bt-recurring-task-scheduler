@@ -3,13 +3,15 @@ import React from "react";
 import { faSquareCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DueTaskTile = ({ id, name, description, image, completedForToday, completeTask, uncompleteTask }) => {
+const DueTaskTile = ({ id, name, description, image, completedForToday, completeTask, uncompleteTask, markTask }) => {
   const handleCompleteClick = async (event) => {
-    await completeTask(id);
+    // await completeTask(id);
+    await markTask(id, "complete");
   }
 
   const handleUncompleteClick = async (event) => {
-    await uncompleteTask(id);
+    // await uncompleteTask(id);
+    await markTask(id, "uncomplete");
   }
 
   let buttons;

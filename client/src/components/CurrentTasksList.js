@@ -12,11 +12,10 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   const [forDate, setForDate] = useState(new Date());
   const dateString = forDate.toLocaleDateString("en-us");
 
-  console.log("rerender");
   useEffect(() => {
     getTasks();
   }, [forDate]);
-
+  
   const getTasks = async () => {
     try {
       const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
@@ -44,28 +43,9 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
     setForDate(new Date());
   }
 
-  const completeTask = async (id) => {
+  const markTask = async (id, markAs) => {
     try {
-      const response = await fetch(`/api/v1/tasks/complete`, {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify({ id: id, forDate: forDate.toLocaleDateString("en-us") })
-      });
-      const body = await response.json();
-      if (!response.ok) {
-        throw new Error(`${response.status} (${response.statusText})`);
-      }
-      setForDate(new Date(forDate));
-    } catch (error) {
-      console.error(`Error in fetch: ${error.message}`);
-    }
-  }
-
-  const uncompleteTask = async (id) => {
-    try {
-      const response = await fetch(`/api/v1/tasks/uncomplete`, {
+      const response = await fetch(`/api/v1/tasks/${markAs}`, {
         method: "POST",
         headers: new Headers({
           "Content-Type": "application/json"
@@ -86,8 +66,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
       key={task.id}
       id={task.id}
       {...task}
-      completeTask={completeTask}
-      uncompleteTask={uncompleteTask}
+      markTask={markTask}
     />;
   });
 
@@ -96,8 +75,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
       key={task.id}
       id={task.id}
       {...task}
-      completeTask={completeTask}
-      uncompleteTask={uncompleteTask}
+      markTask={markTask}
     />;
   });
 
