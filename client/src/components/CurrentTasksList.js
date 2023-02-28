@@ -15,7 +15,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   useEffect(() => {
     getTasks();
   }, [forDate]);
-  
+
   const getTasks = async () => {
     try {
       const response = await fetch(`/api/v1/tasks/${dateString.replaceAll("/", "-")}`)
@@ -57,8 +57,8 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
       }
       const newTasks = tasks.filter(task => task.id !== id);
       const newlyMarkedTask = {
-        ...tasks.find(task => task.id === id), 
-        completedForToday: markAs === "complete"? true : false
+        ...tasks.find(task => task.id === id),
+        completedForToday: markAs === "complete" ? true : false
       };
       console.log(`mark task as ${markAs === "complete"}`);
       setTasks([...newTasks, newlyMarkedTask]);
@@ -67,22 +67,20 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
     }
   }
 
-  const uncompletedTasksArray = tasks.filter(task => !task.completedForToday).map(task => {
-    return <DueTaskTile
-      key={task.id}
-      id={task.id}
-      {...task}
-      markTask={markTask}
-    />;
-  });
-
-  const completedTasksArray = tasks.filter(task => task.completedForToday).map(task => {
-    return <DueTaskTile
-      key={task.id}
-      id={task.id}
-      {...task}
-      markTask={markTask}
-    />;
+  let completedTasksArray = [], uncompletedTasksArray = [];
+  tasks.forEach(task => {
+    let arrayToPushTo;
+    switch (task.completedForToday) {
+      case true: arrayToPushTo = completedTasksArray; break;
+      case false: arrayToPushTo = uncompletedTasksArray;
+    };
+    arrayToPushTo.push(
+      <DueTaskTile
+        key={task.id}
+        id={task.id}
+        {...task}
+        markTask={markTask}
+      />);
   });
 
   return (
