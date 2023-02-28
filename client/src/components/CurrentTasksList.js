@@ -12,6 +12,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   const [forDate, setForDate] = useState(new Date());
   const dateString = forDate.toLocaleDateString("en-us");
 
+  console.log("rerender");
   useEffect(() => {
     getTasks();
   }, [forDate]);
@@ -31,12 +32,12 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   const nextDay = () => {
     const next = addDaysToDate(forDate, 1);
-    setForDate(new Date(next));
+    setForDate(next);
   }
 
   const prevDay = () => {
     const prev = addDaysToDate(forDate, -1);
-    setForDate(new Date(prev));
+    setForDate(prev);
   }
 
   const today = () => {

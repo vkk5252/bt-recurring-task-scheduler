@@ -1,11 +1,9 @@
 import React from "react";
 
-import { faSquareCheck, faRectangleXmark, faFaceFrown } from "@fortawesome/free-regular-svg-icons";
+import { faSquareCheck, faRectangleXmark } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const DueTaskTile = ({ id, name, description, image, startDate, endDate, interval, completedForToday, completeTask, uncompleteTask }) => {
-  const startDateString = (new Date(startDate)).toLocaleDateString("en-US");
-
+const DueTaskTile = ({ id, name, description, image, completedForToday, completeTask, uncompleteTask }) => {
   const handleCompleteClick = async (event) => {
     await completeTask(id);
   }
@@ -14,10 +12,18 @@ const DueTaskTile = ({ id, name, description, image, startDate, endDate, interva
     await uncompleteTask(id);
   }
 
-  const doNothing = () => { }
-
   let buttons;
   if (completedForToday) {
+    // const differences = {
+    //   done: {
+    //     buttonText: "Unmark done",
+    //     clickHandler: handleUncompleteClick
+    //   },
+    //   notDone: {
+    //     buttonText: "Mark done",
+    //     clickHandler: handleCompleteClick
+    //   }
+    // }[mode];
     buttons = (
       <button className="button" onClick={handleUncompleteClick}>
         <FontAwesomeIcon icon={faRectangleXmark} />
