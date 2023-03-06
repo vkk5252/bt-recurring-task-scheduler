@@ -30,41 +30,20 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
   }
 
   const nextDay = () => {
-    const next = addDaysToDate(forDate, 1);
-    setForDate(new Date(next));
+    setForDate(addDaysToDate(forDate, 1));
   }
 
   const prevDay = () => {
-    const prev = addDaysToDate(forDate, -1);
-    setForDate(new Date(prev));
+    setForDate(addDaysToDate(forDate, -1));
   }
 
   const today = () => {
     setForDate(new Date());
   }
 
-  const completeTask = async (id) => {
+  const markTask = async (id, markAs) => {
     try {
-      const response = await fetch(`/api/v1/tasks/complete`, {
-        method: "POST",
-        headers: new Headers({
-          "Content-Type": "application/json"
-        }),
-        body: JSON.stringify({ id: id, forDate: forDate.toLocaleDateString("en-us") })
-      });
-      const body = await response.json();
-      if (!response.ok) {
-        throw new Error(`${response.status} (${response.statusText})`);
-      }
-      setForDate(new Date(forDate));
-    } catch (error) {
-      console.error(`Error in fetch: ${error.message}`);
-    }
-  }
-
-  const uncompleteTask = async (id) => {
-    try {
-      const response = await fetch(`/api/v1/tasks/uncomplete`, {
+      const response = await fetch(`/api/v1/tasks/${markAs}`, {
         method: "POST",
         headers: new Headers({
           "Content-Type": "application/json"
@@ -74,30 +53,31 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
       if (!response.ok) {
         throw new Error(`${response.status} (${response.statusText})`);
       }
-      setForDate(new Date(forDate));
+      const newTasks = tasks.filter(task => task.id !== id);
+      const newlyMarkedTask = {
+        ...tasks.find(task => task.id === id),
+        completedForToday: markAs === "complete" ? true : false
+      };
+      setTasks([...newTasks, newlyMarkedTask]);
     } catch (error) {
       console.error(`Error in fetch: ${error.message}`);
     }
   }
 
-  const uncompletedTasksArray = tasks.filter(task => !task.completedForToday).map(task => {
-    return <DueTaskTile
-      key={task.id}
-      id={task.id}
-      {...task}
-      completeTask={completeTask}
-      uncompleteTask={uncompleteTask}
-    />;
-  });
-
-  const completedTasksArray = tasks.filter(task => task.completedForToday).map(task => {
-    return <DueTaskTile
-      key={task.id}
-      id={task.id}
-      {...task}
-      completeTask={completeTask}
-      uncompleteTask={uncompleteTask}
-    />;
+  let completedTasksArray = [], uncompletedTasksArray = [];
+  tasks.forEach(task => {
+    let arrayToPushTo;
+    switch (task.completedForToday) {
+      case true: arrayToPushTo = completedTasksArray; break;
+      case false: arrayToPushTo = uncompletedTasksArray;
+    };
+    arrayToPushTo.push(
+      <DueTaskTile
+        key={task.id}
+        id={task.id}
+        {...task}
+        markTask={markTask}
+      />);
   });
 
   return (

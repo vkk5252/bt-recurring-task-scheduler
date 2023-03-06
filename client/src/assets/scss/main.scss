@@ -31,6 +31,11 @@ p {
   margin-bottom: 0px;
 }
 
+label {
+  font-family: 'Advent Pro', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+}
 .header {
   font-family: 'Advent Pro', sans-serif;
   font-weight: 1000;
@@ -77,9 +82,16 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  margin-top: 10px;
 }
 
 .task-tile-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.mark-button {
   display: flex;
   justify-content: center;
   margin-top: 10px;
@@ -104,6 +116,10 @@ input::placeholder {
   border-color: #b5b5b5;
   background-color: #cfcfcf;
   color: gray;
+}
+
+.disabled-image {
+  opacity: 50%;
 }
 
 .prev-next-day-buttons-container {

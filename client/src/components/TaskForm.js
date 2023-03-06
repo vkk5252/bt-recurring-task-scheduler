@@ -8,7 +8,7 @@ import Dropzone from "react-dropzone"
 import { faRectangleXmark, faSquareCheck, faImage } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
+const NewTaskForm = ({ formMode, closeForm, currentUser, addTaskTile, editTaskTile, scrollToForm, editTaskData }) => {
   const [errors, setErrors] = useState({});
   const stringsForModes = {
     add: {
@@ -77,12 +77,12 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
     switch (formMode) {
       case "add":
         if (await addTask(formData)) {
-          handleCancelClick();
+          closeForm();
         }
         break;
       case "edit":
         if (await editTask(formData)) {
-          handleCancelClick();
+          closeForm();
         }
     }
   }
@@ -197,7 +197,7 @@ const NewTaskForm = ({ formMode, handleCancelClick, currentUser, addTaskTile, ed
         </div>
 
         <div className="form-buttons-bottom">
-          <button type="button" className="button" onClick={handleCancelClick}>
+          <button type="button" className="button" onClick={closeForm}>
             <FontAwesomeIcon icon={faRectangleXmark} />
             &nbsp;Cancel
           </button>
