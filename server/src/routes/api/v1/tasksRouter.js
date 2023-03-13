@@ -5,7 +5,7 @@ const { ValidationError } = Objection;
 import cleanUserInput from "../../../services/cleanUserInput.js";
 import uploadImage from "../../../services/uploadImage.js";
 
-import { User, Task, TaskCompletion } from "../../../models/index.js";
+import { User, Task } from "../../../models/index.js";
 import TaskSerializer from "../../../serializers/TaskSerializer.js";
 import taskCompletionsRouter from "./taskCompletionsRouter.js";
 
@@ -35,8 +35,8 @@ tasksRouter.get("/:dateString", async (req, res) => {
     const tasks = await currentUser.$relatedQuery("tasks");
     const serializedTasks = TaskSerializer.getSummaries(tasks);
     const nonDeletedTasks = serializedTasks.filter(task => !task.deleted);
-    const filteredTasks = TaskSerializer.filterTasksForDate(nonDeletedTasks, date);
-    const filteredTasksWithCompletions = await Promise.all(filteredTasks.map(task => TaskSerializer.addCompletedForTodayProperty(task, dateString)));
+    const filteredTasks = Task.filterTasksForDate(nonDeletedTasks, date);
+    const filteredTasksWithCompletions = await Promise.all(filteredTasks.map(task => Task.addCompletedForTodayProperty(task, dateString)));
 
     return res.status(200).json({ tasks: filteredTasksWithCompletions });
   } catch (error) {
