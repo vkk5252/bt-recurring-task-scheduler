@@ -19,6 +19,7 @@ tasksRouter.get("/all", async (req, res) => {
     const tasks = await currentUser.$relatedQuery("tasks");
     const serializedTasks = TaskSerializer.getSummaries(tasks);
     const serializedNonDeletedTasks = serializedTasks.filter(task => !task.deleted);
+
     return res.status(200).json({ tasks: serializedNonDeletedTasks });
   } catch (error) {
     return res.status(500).json({ errors: error });
@@ -45,14 +46,14 @@ tasksRouter.get("/:dateString", async (req, res) => {
 });
 
 tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
+  const { body } = req;
+
   try {
-    const { body } = req;
     const newTask = {
       ...body,
       image: req.file?.location,
     }
     const cleanedNewTask = cleanUserInput(newTask);
-
     const addedTask = await Task.query().insertAndFetch(cleanedNewTask);
     
     return res.status(201).json({ addedTask });
@@ -65,23 +66,21 @@ tasksRouter.post("/new", uploadImage.single("image"), async (req, res) => {
 });
 
 tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
+  const { body } = req;
+
   try {
-    const { body } = req;
-    console.log(body);
     const editedTask = {
       ...body,
       image: req.file?.location || body.image || null,
     }
-
-    console.log(editedTask);
     const { taskId } = editedTask;
     delete editedTask.taskId;
     const cleanedEditedTask = cleanUserInput(editedTask);
     if (!cleanedEditedTask.description) {
       cleanedEditedTask.description = "";
     }
-
     const updatedTask = await Task.query().updateAndFetchById(parseInt(taskId), cleanedEditedTask);
+
     return res.status(201).json({ updatedTask })
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -96,6 +95,7 @@ tasksRouter.delete("/:id", async (req, res) => {
 
   try {
     const tasks = await Task.query().findById(id).patch({deleted: true});
+    
     return res.status(204).json({ message: "task deleted successfully" });
   } catch (error) {
     return res.status(401).json({ errors: error });
