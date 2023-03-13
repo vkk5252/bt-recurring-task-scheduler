@@ -43,7 +43,7 @@ const CurrentTasksList = ({ currentUser, ...props }) => {
 
   const markTask = async (id, markAs) => {
     try {
-      const response = await fetch(`/api/v1/tasks/${markAs}`, {
+      const response = await fetch(`/api/v1/tasks/mark/${markAs}`, {
         method: "POST",
         headers: new Headers({
           "Content-Type": "application/json"

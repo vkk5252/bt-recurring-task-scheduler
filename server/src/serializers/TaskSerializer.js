@@ -16,23 +16,6 @@ class TaskSerializer {
   static getSummaries(tasks) {
     return tasks.map(task => TaskSerializer.getSummary(task));
   }
-
-  static filterTasksForDate(tasks, currentDate) {
-    return tasks.filter(task => {
-      const datesMillisecondsDifference = currentDate - task.startDate;
-      const datesDaysDifference = Math.floor(datesMillisecondsDifference / (1000 * 60 * 60 * 24));
-      
-      return datesDaysDifference >= 0 ? !(datesDaysDifference % task.interval) : false;
-    })
-  }
-
-  static async addCompletedForTodayProperty(task, dateString) {
-    const taskRecord = await Task.query().findById(task.id);
-    const completions = await taskRecord.$relatedQuery("completions");
-    const completedForToday = !!completions.find(completion => completion.date === dateString.replaceAll("-", "/"));
-
-    return { ...task, completedForToday: completedForToday };
-  }
 }
 
 export default TaskSerializer;
