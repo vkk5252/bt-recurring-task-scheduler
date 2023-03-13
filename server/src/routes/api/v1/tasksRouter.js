@@ -7,6 +7,7 @@ import uploadImage from "../../../services/uploadImage.js";
 
 import { User, Task, TaskCompletion } from "../../../models/index.js";
 import TaskSerializer from "../../../serializers/TaskSerializer.js";
+import taskCompletionsRouter from "./taskCompletionsRouter.js";
 
 const tasksRouter = new express.Router();
 
@@ -90,36 +91,6 @@ tasksRouter.put("/edit", uploadImage.single("image"), async (req, res) => {
   }
 });
 
-tasksRouter.post("/complete", async (req, res) => {
-  const { id, forDate } = req.body;
-
-  try {
-    const addedTaskCompletion = await TaskCompletion.query().insertAndFetch({ taskId: id, date: forDate })
-    return res.status(201).json({ addedTaskCompletion })
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      return res.status(422).json({ errors: error.data })
-    }
-    return res.status(500).json({ errors: error })
-  }
-});
-
-tasksRouter.post("/uncomplete", async (req, res) => {
-  const { id, forDate } = req.body;
-
-  try {
-    const taskCompletionToDelete = (await TaskCompletion.query().where("taskId", id).where("date", forDate))[0];
-    await TaskCompletion.query().deleteById(parseInt(taskCompletionToDelete.id));
-
-    return res.status(204).json({message: "deleted completion"});
-  } catch (error) {
-    if (error instanceof ValidationError) {
-      return res.status(401).json({ errors: error.data })
-    }
-    return res.status(500).json({ errors: error })
-  }
-});
-
 tasksRouter.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -130,5 +101,7 @@ tasksRouter.delete("/:id", async (req, res) => {
     return res.status(401).json({ errors: error });
   }
 });
+
+tasksRouter.use("/mark", taskCompletionsRouter);
 
 export default tasksRouter;
