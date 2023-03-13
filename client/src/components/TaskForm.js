@@ -46,6 +46,7 @@ const NewTaskForm = ({ formMode, closeForm, currentUser, addTaskTile, editTaskTi
       ...formData,
       [event.currentTarget.name]: event.currentTarget.value
     });
+    scrollToForm();
   }
 
   const handleImageUpload = (acceptedImage) => {

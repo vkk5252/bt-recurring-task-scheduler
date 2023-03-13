@@ -99,7 +99,7 @@ const AllTasksList = ({ currentUser, ...props }) => {
   if (formMode) {
     formComponent = (
       <div className="grid-x grid-margin-x">
-        <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp" ref={formDivRef}>
+        <div className="task-tile callout cell small-12 medium-6 large-4 shadow-sharp">
           <TaskForm
             formMode={formMode}
             closeForm={closeForm}
@@ -123,6 +123,16 @@ const AllTasksList = ({ currentUser, ...props }) => {
         {tasksArray}
       </div>
       {formComponent}
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div>&nbsp;</div>
+      <div ref={formDivRef}></div>
     </div>
   );
 }
