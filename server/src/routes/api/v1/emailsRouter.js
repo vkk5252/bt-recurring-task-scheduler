@@ -16,7 +16,7 @@ emailsRouter.get("/test", (req, res) => {
       //   /* more items */
       // ],
       ToAddresses: [
-        'bt.recurring.task.scheduler@gmail@gmail.com',
+        'vkk5252@gmail.com',
         /* more items */
       ]
     },
@@ -67,7 +67,7 @@ emailsRouter.get("/verify/:verificationCode", async (req, res) => {
     console.log(currentUser);
     if (verificationCode.toString() === currentUser.verificationCode) {
       const updatedUser = await currentUser.$query().patch({ verifiedEmail: true });
-      res.status(200).json({ message: "success", user: updatedUser });
+      res.status(200).json({ message: "success" });
     } else {
       res.status(200).json({ message: "wrong code" });
     }
