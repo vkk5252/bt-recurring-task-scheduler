@@ -1,6 +1,5 @@
 import express from "express";
 import AWS from "aws-sdk";
-import Objection from "objection";
 
 import { User } from "../../../models/index.js";
 
@@ -62,14 +61,16 @@ emailsRouter.get("/test", (req, res) => {
 emailsRouter.get("/verify/:verificationCode", async (req, res) => {
   const currentUserId = req.user?.id;
   const { verificationCode } = req.params;
-  console.log(verificationCode);
 
   try {
     const currentUser = await User.query().findById(currentUserId);
-    // currentUser.verifiedEmail = true;
-    const updatedUser = await User.query().findById(currentUserId).patch({ verifiedEmail: true });
     console.log(currentUser);
-    res.status(200).json({ message: "success", user: updatedUser });
+    if (verificationCode.toString() === currentUser.verificationCode) {
+      const updatedUser = await currentUser.$query().patch({ verifiedEmail: true });
+      res.status(200).json({ message: "success", user: updatedUser });
+    } else {
+      res.status(200).json({ message: "wrong code" });
+    }
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: "failed"});
