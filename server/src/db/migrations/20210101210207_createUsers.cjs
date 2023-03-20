@@ -17,6 +17,8 @@ exports.up = async (knex) => {
       table.bigIncrements("id");
       table.string("email").notNullable().unique();
       table.string("cryptedPassword").notNullable();
+      table.boolean("verifiedEmail").notNullable().defaultTo(false);
+      table.string("verificationCode").notNullable().defaultTo(`${Math.floor(Math.random() * 1000000)}`);
       table.timestamp("createdAt").notNullable().defaultTo(knex.fn.now());
       table.timestamp("updatedAt").notNullable().defaultTo(knex.fn.now());
     });

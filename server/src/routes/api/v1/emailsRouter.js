@@ -1,5 +1,8 @@
 import express from "express";
 import AWS from "aws-sdk";
+import Objection from "objection";
+
+import { User } from "../../../models/index.js";
 
 const emailsRouter = new express.Router();
 
@@ -14,7 +17,7 @@ emailsRouter.get("/test", (req, res) => {
       //   /* more items */
       // ],
       ToAddresses: [
-        'vkk5252@gmail.com',
+        'bt.recurring.task.scheduler@gmail@gmail.com',
         /* more items */
       ]
     },
@@ -54,6 +57,23 @@ emailsRouter.get("/test", (req, res) => {
       });
 
   return res.status(200).json({ message: "test" });
+});
+
+emailsRouter.get("/verify/:verificationCode", async (req, res) => {
+  const currentUserId = req.user?.id;
+  const { verificationCode } = req.params;
+  console.log(verificationCode);
+
+  try {
+    const currentUser = await User.query().findById(currentUserId);
+    // currentUser.verifiedEmail = true;
+    const updatedUser = await User.query().findById(currentUserId).patch({ verifiedEmail: true });
+    console.log(currentUser);
+    res.status(200).json({ message: "success", user: updatedUser });
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ message: "failed"});
+  }
 });
 
 export default emailsRouter;
