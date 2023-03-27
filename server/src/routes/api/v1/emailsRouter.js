@@ -19,12 +19,14 @@ emailsRouter.get("/verify/:verificationCode", async (req, res) => {
 
   try {
     const currentUser = await User.query().findById(currentUserId);
-    console.log(currentUser);
+    if (currentUser.verifiedEmail) {
+      return res.status(200).json({message: "already verified"});
+    }
     if (verificationCode.toString() === currentUser.verificationCode) {
       const updatedUser = await currentUser.$query().patch({ verifiedEmail: true });
-      res.status(200).json({ message: "success" });
+      return res.status(200).json({ message: "success" });
     } else {
-      res.status(200).json({ message: "wrong code" });
+      return res.status(200).json({ message: "wrong code" });
     }
   } catch (err) {
     console.log(err);
