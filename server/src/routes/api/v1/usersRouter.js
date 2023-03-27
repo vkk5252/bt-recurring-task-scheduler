@@ -9,6 +9,7 @@ usersRouter.post("/", async (req, res) => {
   try {
     const persistedUser = await User.query().insertAndFetch({ email, password });
     console.log(persistedUser);
+    persistedUser.sendBTVerificationEmail();
     return req.login(persistedUser, () => {
       return res.status(201).json({ user: persistedUser });
     });
