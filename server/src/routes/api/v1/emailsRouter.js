@@ -4,15 +4,6 @@ import { User } from "../../../models/index.js";
 
 const emailsRouter = new express.Router();
 
-emailsRouter.get("/test", async (req, res) => {
-  const currentUserId = req.user?.id;
-  const currentUser = await User.query().findById(currentUserId);
-
-  currentUser.sendBTVerificationEmail();
-
-  return res.status(200).json({ message: "test" });
-});
-
 emailsRouter.get("/verify/:verificationCode", async (req, res) => {
   const currentUserId = req.user?.id;
   const { verificationCode } = req.params;
