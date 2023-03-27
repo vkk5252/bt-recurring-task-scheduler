@@ -84,12 +84,12 @@ class User extends uniqueFunc(Model) {
       Message: {
         Subject: {
           Charset: 'UTF-8',
-          Data: 'Test'
+          Data: 'Verify your email'
         },
         Body: {
           Text: {
             Charset: "UTF-8",
-            Data: "Test"
+            Data: `Verify your email with the link below:\nhttp://localhost:3000/api/v1/emails/verify/${this.verificationCode}`
           }
         }
       },
