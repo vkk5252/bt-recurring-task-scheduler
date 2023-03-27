@@ -3,6 +3,8 @@ const Bcrypt = require("bcrypt");
 const unique = require("objection-unique");
 const Model = require("./Model");
 
+const AWS = require("aws-sdk");
+
 const saltRounds = 10;
 
 const uniqueFunc = unique({
@@ -30,8 +32,8 @@ class User extends uniqueFunc(Model) {
 
       properties: {
         email: { type: "string" },
-        cryptedPassword: { type: "string" },
-      },
+        cryptedPassword: { type: "string" }
+      }
     };
   }
 
@@ -58,6 +60,52 @@ class User extends uniqueFunc(Model) {
     }
 
     return serializedJson;
+  }
+
+  sendSESVerificationEmail() {
+    var verifyEmailPromise = new AWS.SES({ apiVersion: '2010-12-01' }).verifyEmailIdentity({ EmailAddress: this.email }).promise();
+
+    verifyEmailPromise.then(
+      function (data) {
+        console.log("Email verification initiated");
+      }).catch(
+        function (err) {
+          console.error(err, err.stack);
+        });
+  }
+
+  sendBTVerificationEmail() {
+    AWS.config.update({ region: 'us-east-2' });
+
+    var params = {
+      Destination: {
+        ToAddresses: [this.email]
+      },
+      Message: {
+        Subject: {
+          Charset: 'UTF-8',
+          Data: 'Verify your email'
+        },
+        Body: {
+          Text: {
+            Charset: "UTF-8",
+            Data: `Verify your email with the link below:\nhttp://localhost:3000/api/v1/emails/verify/${this.verificationCode}`
+          }
+        }
+      },
+      Source: 'bt.recurring.task.scheduler@gmail.com',
+      ReplyToAddresses: ['bt.recurring.task.scheduler@gmail.com']
+    };
+
+    var sendPromise = new AWS.SES({ apiVersion: '2010-12-01' }).sendEmail(params).promise();
+
+    sendPromise.then(
+      function (data) {
+        console.log(data.MessageId);
+      }).catch(
+        function (err) {
+          console.error(err, err.stack);
+        });
   }
 }
 
